@@ -35,4 +35,10 @@ describe('CostTable', () => {
     const dashes = screen.getAllByText('—')
     expect(dashes.length).toBeGreaterThan(0)
   })
+
+  it('column headers have scope="col"', () => {
+    render(<CostTable result={result} />)
+    const headers = document.querySelectorAll('th[scope="col"]')
+    expect(headers.length).toBe(3)
+  })
 })

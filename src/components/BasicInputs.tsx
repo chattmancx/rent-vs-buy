@@ -63,7 +63,11 @@ export function BasicInputs({
           <div className="flex items-center text-sm font-medium text-gray-700">
             <span>Analysis Horizon</span>
             <Tooltip text="How many years to model. Longer horizons tend to favor buying; shorter ones often favor renting.">
-              <button type="button" className="ml-1 text-gray-400 hover:text-gray-600">
+              <button
+                type="button"
+                aria-label="More information about Analysis Horizon"
+                className="ml-1 text-gray-600 hover:text-gray-700"
+              >
                 ?
               </button>
             </Tooltip>
@@ -78,6 +82,7 @@ export function BasicInputs({
           value={shared.horizon_years}
           onChange={(e) => updateShared({ horizon_years: parseInt(e.target.value, 10) })}
           className="w-full accent-blue-600"
+          aria-label="Analysis horizon in years"
         />
       </div>
 
@@ -98,7 +103,11 @@ export function BasicInputs({
           <div className="flex items-center text-sm font-medium text-gray-700">
             <span>Invest vs. Spend</span>
             <Tooltip text="When one option is cheaper monthly, what fraction of the savings gets invested vs. spent. 50% is a reasonable middle ground.">
-              <button type="button" className="ml-1 text-gray-400 hover:text-gray-600">
+              <button
+                type="button"
+                aria-label="More information about Invest vs. Spend ratio"
+                className="ml-1 text-gray-600 hover:text-gray-700"
+              >
                 ?
               </button>
             </Tooltip>
@@ -115,6 +124,7 @@ export function BasicInputs({
           value={shared.invest_vs_spend_ratio}
           onChange={(e) => updateShared({ invest_vs_spend_ratio: parseFloat(e.target.value) })}
           className="w-full accent-blue-600"
+          aria-label="Fraction of monthly savings to invest"
         />
       </div>
     </div>

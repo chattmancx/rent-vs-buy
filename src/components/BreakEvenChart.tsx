@@ -40,45 +40,50 @@ export function BreakEvenChart({ result, updateShared }: BreakEvenChartProps) {
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-4">
       <h2 className="mb-3 text-sm font-semibold text-gray-700">Net Worth Over Time</h2>
-      <ResponsiveContainer width="100%" height={320}>
-        <LineChart data={chartData} margin={{ top: 8, right: 16, bottom: 8, left: 16 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-          <XAxis dataKey="year" label={{ value: 'Year', position: 'insideBottom', offset: -4 }} />
-          <YAxis tickFormatter={formatCurrencyCompact} width={72} />
-          <ChartTooltip
-            formatter={(value: number, name: string) => [
-              formatCurrency(value),
-              name === 'owner' ? 'Buying' : 'Renting',
-            ]}
-            labelFormatter={(label: number) => `Year ${label}`}
-          />
-          <Legend formatter={(value: string) => (value === 'owner' ? 'Buying' : 'Renting')} />
-          {crossoverYear !== null && (
-            <ReferenceLine
-              x={crossoverYear}
-              stroke="#6b7280"
-              strokeDasharray="4 4"
-              label={{ value: 'Break-even', position: 'top', fontSize: 11, fill: '#6b7280' }}
+      <div
+        role="img"
+        aria-label={`Net worth over time chart over ${result.inputs.shared.horizon_years} years.${crossoverYear !== null ? ` Buying and renting lines cross at year ${crossoverYear}.` : ' No break-even within the analysis period.'}`}
+      >
+        <ResponsiveContainer width="100%" height={320}>
+          <LineChart data={chartData} margin={{ top: 8, right: 16, bottom: 8, left: 16 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+            <XAxis dataKey="year" label={{ value: 'Year', position: 'insideBottom', offset: -4 }} />
+            <YAxis tickFormatter={formatCurrencyCompact} width={72} />
+            <ChartTooltip
+              formatter={(value: number, name: string) => [
+                formatCurrency(value),
+                name === 'owner' ? 'Buying' : 'Renting',
+              ]}
+              labelFormatter={(label: number) => `Year ${label}`}
             />
-          )}
-          <Line
-            type="monotone"
-            dataKey="owner"
-            stroke="#16a34a"
-            strokeWidth={2}
-            dot={false}
-            name="owner"
-          />
-          <Line
-            type="monotone"
-            dataKey="renter"
-            stroke="#2563eb"
-            strokeWidth={2}
-            dot={false}
-            name="renter"
-          />
-        </LineChart>
-      </ResponsiveContainer>
+            <Legend formatter={(value: string) => (value === 'owner' ? 'Buying' : 'Renting')} />
+            {crossoverYear !== null && (
+              <ReferenceLine
+                x={crossoverYear}
+                stroke="#6b7280"
+                strokeDasharray="4 4"
+                label={{ value: 'Break-even', position: 'top', fontSize: 11, fill: '#6b7280' }}
+              />
+            )}
+            <Line
+              type="monotone"
+              dataKey="owner"
+              stroke="#16a34a"
+              strokeWidth={2}
+              dot={false}
+              name="owner"
+            />
+            <Line
+              type="monotone"
+              dataKey="renter"
+              stroke="#2563eb"
+              strokeWidth={2}
+              dot={false}
+              name="renter"
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
       <div className="mt-3 px-4">
         <div className="mb-1 flex items-center justify-between text-xs text-gray-500">
           <span>1 yr</span>

@@ -10,7 +10,7 @@ export function DebugPanel({ result }: DebugPanelProps) {
 
   return (
     <details>
-      <summary className="cursor-pointer select-none py-2 text-sm font-semibold text-gray-500">
+      <summary className="cursor-pointer select-none py-2 text-sm font-semibold text-gray-600">
         Debug: Raw Engine Output
       </summary>
       <div className="mt-2 space-y-2">

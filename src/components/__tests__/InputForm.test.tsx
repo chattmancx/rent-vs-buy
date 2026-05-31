@@ -41,4 +41,17 @@ describe('App input form', () => {
     // PMI Rate is an advanced-only field
     expect(screen.getByText('PMI Rate')).toBeTruthy()
   })
+
+  it('renders a main landmark element', () => {
+    render(<App />)
+    expect(document.querySelector('main')).not.toBeNull()
+  })
+
+  it('range sliders have aria-label attributes', () => {
+    render(<App />)
+    const sliders = document.querySelectorAll('input[type="range"]')
+    sliders.forEach((slider) => {
+      expect(slider.getAttribute('aria-label')).not.toBeNull()
+    })
+  })
 })

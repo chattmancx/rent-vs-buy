@@ -34,6 +34,9 @@ jobs:
       - name: Test
         run: pnpm test -- --run
 
+      - name: Build
+        run: pnpm build
+
       # Audit production dependencies only; fails on high/critical.
       # To suppress a specific advisory, add it to pnpm.auditConfig.ignoreCves in package.json
       # with a comment documenting the advisory ID and why it is acceptable.

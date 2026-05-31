@@ -1,5 +1,19 @@
 # Changelog
 
+## Stage 6 — Accessibility, responsive layout, deploy (2026-05-31)
+
+- `vite.config.ts` — conditional `base: '/rent-vs-buy/'` for production builds; dev server keeps `/`
+- `.github/workflows/deploy.yml` — new workflow: builds and deploys to `gh-pages` branch on push to master (via `peaceiris/actions-gh-pages@v4`)
+- `.github/workflows/ci.yml` — added `pnpm build` step so build failures are caught in CI
+- `src/App.tsx` — added skip-to-main-content link; replaced outer div with `<main id="main-content">`; added `role="alert"` to URL error banner
+- `src/components/InputField.tsx` — tooltip `?` button: added `aria-label`; changed `text-gray-400` → `text-gray-600` for WCAG AA contrast
+- `src/components/BasicInputs.tsx` — added `aria-label` to both range sliders; fixed `?` button contrast
+- `src/components/CostTable.tsx` — added `scope="col"` to `<th>` elements; added visually hidden `<caption>`
+- `src/components/SensitivityStrip.tsx` — wrapped in `<section aria-labelledby>`; added `sr-only` directional text to color-coded delta values
+- `src/components/BreakEvenChart.tsx` — added `role="img"` + `aria-label` wrapper around chart for screen reader description
+- `src/components/DebugPanel.tsx` — `text-gray-500` → `text-gray-600` on summary (contrast fix)
+- Tests: 113 total (3 new — `scope="col"` assertion, `<main>` landmark assertion, slider aria-label assertion)
+
 ## Stage 5 — CSV export, JSON import/export (2026-05-31)
 
 - `src/lib/csv-export.ts` — pure `exportToCsv(result)` function; multi-section CSV (metadata, yearly summary, key totals); formula-injection sanitization on all cell values

@@ -39,7 +39,11 @@ export function InputField({
         <label htmlFor={inputId}>{label}</label>
         {tooltip !== undefined && (
           <Tooltip text={tooltip}>
-            <button type="button" className="ml-1 text-gray-400 hover:text-gray-600">
+            <button
+              type="button"
+              aria-label={`More information about ${label}`}
+              className="ml-1 text-gray-600 hover:text-gray-700"
+            >
               ?
             </button>
           </Tooltip>

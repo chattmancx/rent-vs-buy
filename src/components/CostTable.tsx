@@ -87,11 +87,20 @@ export function CostTable({ result }: CostTableProps) {
   return (
     <div className="overflow-x-auto rounded-lg border border-gray-200">
       <table className="w-full border-collapse">
+        <caption className="sr-only">
+          Cost breakdown comparing buying and renting over {inputs.shared.horizon_years} years
+        </caption>
         <thead>
           <tr className="bg-gray-100">
-            <th className="py-2 px-3 text-left text-sm font-semibold text-gray-700">Category</th>
-            <th className="py-2 px-3 text-right text-sm font-semibold text-gray-700">Buying</th>
-            <th className="py-2 px-3 text-right text-sm font-semibold text-gray-700">Renting</th>
+            <th scope="col" className="py-2 px-3 text-left text-sm font-semibold text-gray-700">
+              Category
+            </th>
+            <th scope="col" className="py-2 px-3 text-right text-sm font-semibold text-gray-700">
+              Buying
+            </th>
+            <th scope="col" className="py-2 px-3 text-right text-sm font-semibold text-gray-700">
+              Renting
+            </th>
           </tr>
         </thead>
         <tbody>

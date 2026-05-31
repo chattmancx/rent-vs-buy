@@ -111,8 +111,10 @@ export function SensitivityStrip({ input, result }: SensitivityStripProps) {
   }, [result, input])
 
   return (
-    <div>
-      <h2 className="mb-2 text-sm font-semibold text-gray-700">Sensitivity: ±1pp Change</h2>
+    <section aria-labelledby="sensitivity-heading">
+      <h2 id="sensitivity-heading" className="mb-2 text-sm font-semibold text-gray-700">
+        Sensitivity: ±1pp Change
+      </h2>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {sensitivities.map((card) => (
           <div key={card.label} className="rounded-lg border border-gray-200 bg-white p-3">
@@ -122,18 +124,28 @@ export function SensitivityStrip({ input, result }: SensitivityStripProps) {
                 <span className="text-xs text-gray-500">+1pp</span>
                 <span className={`font-mono text-xs ${deltaColorClass(card.plus)}`}>
                   {formatSensitivityDelta(card.plus)}
+                  {card.plus !== null && card.plus !== 0 && (
+                    <span className="sr-only">
+                      {card.plus > 0 ? '(favors buying)' : '(favors renting)'}
+                    </span>
+                  )}
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-xs text-gray-500">-1pp</span>
                 <span className={`font-mono text-xs ${deltaColorClass(card.minus)}`}>
                   {formatSensitivityDelta(card.minus)}
+                  {card.minus !== null && card.minus !== 0 && (
+                    <span className="sr-only">
+                      {card.minus > 0 ? '(favors buying)' : '(favors renting)'}
+                    </span>
+                  )}
                 </span>
               </div>
             </div>
           </div>
         ))}
       </div>
-    </div>
+    </section>
   )
 }
