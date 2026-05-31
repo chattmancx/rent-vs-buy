@@ -4,13 +4,22 @@ import { AdvancedInputs } from './components/AdvancedInputs'
 import { DebugPanel } from './components/DebugPanel'
 import { HeadlineResult } from './components/HeadlineResult'
 import { CostTable } from './components/CostTable'
+import { ExportPanel } from './components/ExportPanel'
 import { InputSection } from './components/InputSection'
 import { BreakEvenChart } from './components/BreakEvenChart'
 import { SensitivityStrip } from './components/SensitivityStrip'
 
 export default function App() {
-  const { input, result, urlError, dismissUrlError, updateOwnership, updateRental, updateShared } =
-    useScenario()
+  const {
+    input,
+    result,
+    urlError,
+    dismissUrlError,
+    updateOwnership,
+    updateRental,
+    updateShared,
+    replaceInput,
+  } = useScenario()
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
@@ -46,6 +55,7 @@ export default function App() {
         <BreakEvenChart result={result} updateShared={updateShared} />
         <SensitivityStrip input={input} result={result} />
         <CostTable result={result} />
+        <ExportPanel result={result} input={input} onImport={replaceInput} />
         <DebugPanel result={result} />
       </div>
     </div>

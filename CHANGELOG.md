@@ -1,5 +1,15 @@
 # Changelog
 
+## Stage 5 — CSV export, JSON import/export (2026-05-31)
+
+- `src/lib/csv-export.ts` — pure `exportToCsv(result)` function; multi-section CSV (metadata, yearly summary, key totals); formula-injection sanitization on all cell values
+- `src/lib/json-io.ts` — `exportToJson(input)` and `importFromJson(raw)` (Zod-validated, never throws)
+- `src/components/ExportPanel.tsx` — three-button panel: Download CSV, Download JSON, Import JSON; FileReader-based import with inline error state
+- `src/hooks/useScenario.ts` — added `replaceInput(input)` for single-render full input replacement (used by JSON import)
+- Updated `App.tsx` — ExportPanel inserted between CostTable and DebugPanel
+- Updated `src/test-setup.ts` — added `URL.createObjectURL` / `URL.revokeObjectURL` stubs for jsdom
+- Tests: 110 total (17 new — 7 csv-export + 5 json-io + 5 ExportPanel)
+
 ## Stage 4 — Break-even chart, horizon slider, sensitivity strip (2026-05-31)
 
 - `src/lib/format.ts` — added `formatCurrencyCompact` for compact Y-axis labels (`$550K`, `$1.2M`)

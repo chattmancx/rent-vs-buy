@@ -6,3 +6,7 @@ globalThis.ResizeObserver = class ResizeObserver {
   unobserve() {}
   disconnect() {}
 }
+
+// jsdom does not implement URL.createObjectURL / revokeObjectURL (used by file download).
+globalThis.URL.createObjectURL = () => 'blob:mock-url'
+globalThis.URL.revokeObjectURL = () => {}

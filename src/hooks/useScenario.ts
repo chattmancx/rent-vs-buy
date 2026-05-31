@@ -75,6 +75,10 @@ export function useScenario() {
     setState((prev) => ({ ...prev, urlError: false }))
   }, [])
 
+  const replaceInput = useCallback((newInput: ScenarioInput) => {
+    setState({ input: newInput, result: computeScenario(newInput), urlError: false })
+  }, [])
+
   return {
     input: state.input,
     result: state.result,
@@ -83,5 +87,6 @@ export function useScenario() {
     updateOwnership,
     updateRental,
     updateShared,
+    replaceInput,
   }
 }

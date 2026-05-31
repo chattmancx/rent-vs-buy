@@ -30,6 +30,15 @@ Write `verifications/stage-$ARGUMENTS-tokens.md` using this exact structure. Fil
 **Model:** <model ID from session>
 **Stage:** $ARGUMENTS — <stage name from brief>
 
+## Estimated token usage
+
+| Metric               | Estimate | Notes                                                                              |
+| -------------------- | -------- | ---------------------------------------------------------------------------------- |
+| Input tokens         | ~N K     | Total context fed in across all turns (CLAUDE.md + files + tool results + history) |
+| Output tokens        | ~N K     | Total tokens generated (code, explanations, tool calls)                            |
+| Context window used  | ~N%      | Rough % of 200K window consumed at peak                                            |
+| Largest single input | <source> | The single turn or file that contributed most to input size                        |
+
 ## Session composition
 
 | Category                | Count | Notes                                   |
