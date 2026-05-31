@@ -6,23 +6,23 @@
 
 ## Estimated token usage
 
-| Metric               | Estimate | Notes                                                                         |
-| -------------------- | -------- | ----------------------------------------------------------------------------- |
-| Input tokens         | ~90K     | Plan mode + Explore agent + CLAUDE.md fixed cost + 2 source file reads + test output |
-| Output tokens        | ~20K     | 7 new files written + 4 edits + plan file + acceptance/token reports          |
-| Context window used  | ~55%     | Plan mode + Explore agent kept this lower than Stage 4                        |
-| Largest single input | Explore agent result | Full contents of 6 files returned in one agent response    |
+| Metric               | Estimate             | Notes                                                                                |
+| -------------------- | -------------------- | ------------------------------------------------------------------------------------ |
+| Input tokens         | ~90K                 | Plan mode + Explore agent + CLAUDE.md fixed cost + 2 source file reads + test output |
+| Output tokens        | ~20K                 | 7 new files written + 4 edits + plan file + acceptance/token reports                 |
+| Context window used  | ~55%                 | Plan mode + Explore agent kept this lower than Stage 4                               |
+| Largest single input | Explore agent result | Full contents of 6 files returned in one agent response                              |
 
 ## Session composition
 
-| Category                | Count | Notes                                                               |
-| ----------------------- | ----- | ------------------------------------------------------------------- |
-| Files read (Read tool)  | 4     | SKILL.md (acceptance-report), useScenario.ts, App.tsx, CHANGELOG.md (5 lines) |
+| Category                | Count | Notes                                                                                                                 |
+| ----------------------- | ----- | --------------------------------------------------------------------------------------------------------------------- |
+| Files read (Read tool)  | 4     | SKILL.md (acceptance-report), useScenario.ts, App.tsx, CHANGELOG.md (5 lines)                                         |
 | Files written / edited  | 11    | brief, csv-export.ts, json-io.ts, 3 test files, ExportPanel.tsx, useScenario.ts, App.tsx, test-setup.ts, CHANGELOG.md |
-| Bash commands run       | 5     | pnpm test ×2, pnpm format+lint+typecheck+build (chained), verification checks |
-| Test suite runs         | 2     | Single run after all files written; one confirmation run            |
-| Subagent / Agent spawns | 1     | Explore agent to read 6 files at plan time (replaced 6 Read calls)  |
-| Plan mode iterations    | 1     | Full plan written; ExitPlanMode approved                            |
+| Bash commands run       | 5     | pnpm test ×2, pnpm format+lint+typecheck+build (chained), verification checks                                         |
+| Test suite runs         | 2     | Single run after all files written; one confirmation run                                                              |
+| Subagent / Agent spawns | 1     | Explore agent to read 6 files at plan time (replaced 6 Read calls)                                                    |
+| Plan mode iterations    | 1     | Full plan written; ExitPlanMode approved                                                                              |
 
 ## Context budget usage
 
