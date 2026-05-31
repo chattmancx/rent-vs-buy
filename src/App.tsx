@@ -2,6 +2,8 @@ import { useScenario } from './hooks/useScenario'
 import { BasicInputs } from './components/BasicInputs'
 import { AdvancedInputs } from './components/AdvancedInputs'
 import { DebugPanel } from './components/DebugPanel'
+import { HeadlineResult } from './components/HeadlineResult'
+import { CostTable } from './components/CostTable'
 import { InputSection } from './components/InputSection'
 
 export default function App() {
@@ -24,6 +26,7 @@ export default function App() {
       )}
       <h1 className="mb-6 text-3xl font-bold text-gray-900">Rent vs Buy Calculator</h1>
       <div className="space-y-6">
+        <HeadlineResult result={result} />
         <BasicInputs
           input={input}
           updateOwnership={updateOwnership}
@@ -38,6 +41,7 @@ export default function App() {
             updateShared={updateShared}
           />
         </InputSection>
+        <CostTable result={result} />
         <DebugPanel result={result} />
       </div>
     </div>

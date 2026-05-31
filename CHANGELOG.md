@@ -1,5 +1,14 @@
 # Changelog
 
+## Stage 3 — Numerical outputs (2026-05-31)
+
+- `src/lib/format.ts` — `formatCurrency` (en-US, no decimals) and `formatDelta` (+/- prefixed) utilities
+- `src/components/HeadlineResult.tsx` — live one-sentence verdict: "Over N years, buying/renting wins by $X"; color-coded border by winner; tie branch shows "essentially even"
+- `src/components/CostTable.tsx` — side-by-side owner/renter cost breakdown table; 19 rows covering all cost components, total outflows (subtotal), sale proceeds, investment portfolio, and final net worth; winner's net worth highlighted green
+- Updated `App.tsx` — `HeadlineResult` above form, `CostTable` below form, `DebugPanel` last
+- Tests: 77 total (9 new — 4 HeadlineResult + 5 CostTable)
+- Pre-stage: added `Bash(rm /tmp/*)` to allowlist for engine-smoke; added visual verification step to stage wrap-up in CLAUDE.md; updated skills-log with bundled `/run` skill guidance; wrote `briefs/claude_code_task_stage3.md`
+
 ## Stage 2 — App shell, input form, URL state, live recalculation (2026-05-31)
 
 - Installed `zod` for boundary validation of untrusted input

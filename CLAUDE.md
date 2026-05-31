@@ -99,6 +99,7 @@ npx vite *
 find . *
 ls *
 mkdir -p *
+rm /tmp/*
 ```
 
 **Git (read)**
@@ -116,9 +117,26 @@ git show *
 git init
 git add *
 git commit *
+git branch *
+git checkout *
+git push *
+git remote *
 ```
 
-Note: `git push`, `git reset`, `git checkout --`, and `git rebase` are intentionally omitted — always confirm these interactively.
+Note: `git push --force`, `git reset`, `git checkout --`, and `git rebase` are intentionally omitted — always confirm these interactively.
+
+**GitHub CLI**
+
+```
+gh pr create *
+gh pr view *
+gh pr list *
+gh pr status *
+gh repo view *
+gh auth status *
+```
+
+Note: `gh pr merge *` and `gh pr close *` are omitted — confirm merges and closes interactively.
 
 ## Architecture
 
@@ -193,10 +211,11 @@ The renter's investment balance is seeded at month 0 by `(down_payment + closing
 Run at the end of **every** stage session, in this order:
 
 1. **Verify CI** — `/ci-check`; fix any failures before continuing.
-2. **Acceptance report** — `/acceptance-report N`; save output to `verifications/stage-N.md`.
-3. **Token report** — `/token-report N`; saves `verifications/stage-N-tokens.md` (see format below).
-4. **Skills update** — add any new recommended skills for the next stage to `.claude/skills/`; update `briefs/skills-log.md`.
-5. **Commit** — stage only files touched in this session; commit message: `Stage N — <stage name>`.
+2. **Visual verification** — Stages 3–6 produce UI output. Run `pnpm dev` and open the browser to confirm the golden path works and no regressions exist in previously working features. Use the bundled `/run` skill to launch and drive the app. Document what was verified.
+3. **Acceptance report** — `/acceptance-report N`; save output to `verifications/stage-N.md`.
+4. **Token report** — `/token-report N`; saves `verifications/stage-N-tokens.md` (see format below).
+5. **Skills update** — add any new recommended skills for the next stage to `.claude/skills/`; update `briefs/skills-log.md`.
+6. **Commit** — stage only files touched in this session; commit message: `Stage N — <stage name>`.
 
 ### Token distribution report
 

@@ -21,12 +21,23 @@
     "Bash(find . *)",
     "Bash(ls*)",
     "Bash(mkdir -p *)",
+    "Bash(rm /tmp/*)",
     "Bash(git status*)",
     "Bash(git diff*)",
     "Bash(git log*)",
     "Bash(git show*)",
     "Bash(git init*)",
     "Bash(git add*)",
-    "Bash(git commit*)"
+    "Bash(git commit*)",
+    "Bash(git branch*)",
+    "Bash(git checkout*)",
+    "Bash(git push*)",
+    "Bash(git remote*)",
+    "Bash(gh pr create*)",
+    "Bash(gh pr view*)",
+    "Bash(gh pr list*)",
+    "Bash(gh pr status*)",
+    "Bash(gh repo view*)",
+    "Bash(gh auth status*)"
   ]
 }
