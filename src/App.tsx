@@ -5,6 +5,8 @@ import { DebugPanel } from './components/DebugPanel'
 import { HeadlineResult } from './components/HeadlineResult'
 import { CostTable } from './components/CostTable'
 import { InputSection } from './components/InputSection'
+import { BreakEvenChart } from './components/BreakEvenChart'
+import { SensitivityStrip } from './components/SensitivityStrip'
 
 export default function App() {
   const { input, result, urlError, dismissUrlError, updateOwnership, updateRental, updateShared } =
@@ -41,6 +43,8 @@ export default function App() {
             updateShared={updateShared}
           />
         </InputSection>
+        <BreakEvenChart result={result} updateShared={updateShared} />
+        <SensitivityStrip input={input} result={result} />
         <CostTable result={result} />
         <DebugPanel result={result} />
       </div>

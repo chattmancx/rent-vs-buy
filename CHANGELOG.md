@@ -1,5 +1,14 @@
 # Changelog
 
+## Stage 4 — Break-even chart, horizon slider, sensitivity strip (2026-05-31)
+
+- `src/lib/format.ts` — added `formatCurrencyCompact` for compact Y-axis labels (`$550K`, `$1.2M`)
+- `src/components/BreakEvenChart.tsx` — Recharts v2 two-line net-worth chart (green Buying, blue Renting); dashed "Break-even" ReferenceLine when lines cross; horizon range slider below chart wired to same `horizon_years` state as BasicInputs
+- `src/components/SensitivityStrip.tsx` — 4-card ±1pp sensitivity panel for interest rate, home appreciation, investment return, and rent growth; 8 synchronous `computeScenario` calls via `useMemo`; green/red delta coloring
+- Updated `App.tsx` — BreakEvenChart and SensitivityStrip inserted between Advanced Options and CostTable
+- `src/test-setup.ts` — added `globalThis.ResizeObserver` stub so InputForm tests continue to pass after Recharts was added to App
+- Tests: 93 total (16 new — 5 format + 5 BreakEvenChart + 6 SensitivityStrip); wrote `briefs/claude_code_task_stage4.md`
+
 ## Stage 3 — Numerical outputs (2026-05-31)
 
 - `src/lib/format.ts` — `formatCurrency` (en-US, no decimals) and `formatDelta` (+/- prefixed) utilities
