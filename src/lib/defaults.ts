@@ -1,0 +1,42 @@
+import type { ScenarioInput } from '../engine'
+
+export const DEFAULT_INPUT: ScenarioInput = {
+  ownership: {
+    purchase_price: 550000,
+    down_payment_pct: 20,
+    interest_rate: 6.8,
+    loan_term_years: 30,
+    pmi_rate: 0.5,
+    real_estate_tax_rate: 1.1,
+    assessed_value: 0,
+    homeowner_insurance_annual: 1500,
+    hoa_monthly: 0,
+    home_size_sqft: 1800,
+    closing_costs_pct: 2.5,
+    maintenance_pct_annual: 1.0,
+    home_appreciation_rate: 0.04,
+    hoa_increase_rate: 0.03,
+    maintenance_increase_rate: 0.03,
+    insurance_increase_rate: 0.03,
+    selling_cost_pct: 7.5,
+  },
+  rental: {
+    base_rent_monthly: 2500,
+    pet_rent_monthly: 0,
+    parking_fee_monthly: 0,
+    renters_insurance_monthly: 20,
+    admin_fee: 0,
+    security_deposit: 0,
+    pet_deposit: 0,
+    rent_increase_rate: 0.04,
+    pet_rent_increase_rate: 0.03,
+    parking_increase_rate: 0.03,
+  },
+  shared: {
+    utilities_monthly_base: 150,
+    utilities_increase_rate: 0.03,
+    horizon_years: 10,
+    investment_return_rate: 0.07,
+    invest_vs_spend_ratio: 0.5,
+  },
+}
