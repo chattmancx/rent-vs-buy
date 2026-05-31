@@ -15,25 +15,25 @@
 
 ## Session composition
 
-| Category                | Count | Notes                                                                            |
-| ----------------------- | ----- | -------------------------------------------------------------------------------- |
+| Category                | Count | Notes                                                                                                                                                                                                           |
+| ----------------------- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Files read (Read tool)  | 10    | vite.config.ts, ci.yml, InputField.tsx, BasicInputs.tsx, CostTable.tsx (3x partial), SensitivityStrip.tsx (2x partial), BreakEvenChart.tsx (2x partial), DebugPanel.tsx, CostTable.test.tsx, InputForm.test.tsx |
-| Files written / edited  | 13    | brief, deploy.yml, vite.config.ts, ci.yml, App.tsx, InputField.tsx, BasicInputs.tsx, CostTable.tsx, SensitivityStrip.tsx, BreakEvenChart.tsx, DebugPanel.tsx, CostTable.test.tsx, InputForm.test.tsx |
-| Bash commands run       | 3     | pnpm test (dot), pnpm format+lint+typecheck+build (chained), git operations     |
-| Test suite runs         | 1     | Single run after all files written — all 113 passed                             |
-| Subagent / Agent spawns | 2     | Two Explore agents in plan phase (component audit + build config)               |
-| Plan mode iterations    | 1     | Full plan written; ExitPlanMode approved                                        |
+| Files written / edited  | 13    | brief, deploy.yml, vite.config.ts, ci.yml, App.tsx, InputField.tsx, BasicInputs.tsx, CostTable.tsx, SensitivityStrip.tsx, BreakEvenChart.tsx, DebugPanel.tsx, CostTable.test.tsx, InputForm.test.tsx            |
+| Bash commands run       | 3     | pnpm test (dot), pnpm format+lint+typecheck+build (chained), git operations                                                                                                                                     |
+| Test suite runs         | 1     | Single run after all files written — all 113 passed                                                                                                                                                             |
+| Subagent / Agent spawns | 2     | Two Explore agents in plan phase (component audit + build config)                                                                                                                                               |
+| Plan mode iterations    | 1     | Full plan written; ExitPlanMode approved                                                                                                                                                                        |
 
 ## Context budget usage
 
-| Source                                | Relative weight | Notes                                                                |
-| ------------------------------------- | --------------- | -------------------------------------------------------------------- |
-| CLAUDE.md (always loaded)             | ~high           | Fixed cost every turn; dominant cumulative source                    |
-| Stage brief                           | ~low            | Not re-read during implementation; plan file used instead            |
+| Source                                | Relative weight | Notes                                                                                  |
+| ------------------------------------- | --------------- | -------------------------------------------------------------------------------------- |
+| CLAUDE.md (always loaded)             | ~high           | Fixed cost every turn; dominant cumulative source                                      |
+| Stage brief                           | ~low            | Not re-read during implementation; plan file used instead                              |
 | Source files read                     | ~medium         | Required partial reads of 5 component files (already had Explore data for top portion) |
-| Tool call results (tests, lint, etc.) | ~low            | Single dot-mode test run + chained build output; very compact        |
-| Subagent context                      | ~medium-high    | Two Explore agents each returned 6+ files; large but contained       |
-| Conversation turns                    | ~low            | Straight-through implementation; no debugging cycles                 |
+| Tool call results (tests, lint, etc.) | ~low            | Single dot-mode test run + chained build output; very compact                          |
+| Subagent context                      | ~medium-high    | Two Explore agents each returned 6+ files; large but contained                         |
+| Conversation turns                    | ~low            | Straight-through implementation; no debugging cycles                                   |
 
 ## Cache effectiveness
 
