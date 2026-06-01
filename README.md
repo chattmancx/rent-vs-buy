@@ -41,16 +41,9 @@ pnpm lint       # ESLint
 
 ```
 src/engine/   Pure TypeScript math engine — no UI dependencies
-src/          React app (Stages 2–6)
-reference/    Original Python implementation (read-only)
-briefs/       Stage briefs and planning documents
-verifications/  Acceptance reports per stage
+src/          React app
 ```
 
 ## Deployed URL
 
-_To be added after Stage 6._
-
----
-
-See `briefs/Rent-vs-buy project handoff.md` for full project context and stage breakdown.
+https://chattmancx.github.io/rent-vs-buy/
