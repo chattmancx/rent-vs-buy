@@ -14,3 +14,14 @@ coverage/
 # OS
 .DS_Store
 Thumbs.db
+
+# Project docs & planning (backed up via iCloud/Time Machine)
+briefs/
+verifications/
+reference/
+CLAUDE.md
+CHANGELOG.md
+LESSONS_LEARNED.md
+
+# Claude Code configuration
+.claude/
