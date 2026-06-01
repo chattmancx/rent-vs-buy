@@ -60,11 +60,12 @@ export function CostTable({ result }: CostTableProps) {
       variant: 'networth',
     },
     {
-      label: ownerNetGainLoss >= 0 && renterNetGainLoss >= 0
-        ? 'Net gain'
-        : ownerNetGainLoss < 0 && renterNetGainLoss < 0
-          ? 'Net loss'
-          : 'Net gain / loss',
+      label:
+        ownerNetGainLoss >= 0 && renterNetGainLoss >= 0
+          ? 'Net gain'
+          : ownerNetGainLoss < 0 && renterNetGainLoss < 0
+            ? 'Net loss'
+            : 'Net gain / loss',
       owner: ownerNetGainLoss,
       renter: renterNetGainLoss,
       variant: 'gainloss',
