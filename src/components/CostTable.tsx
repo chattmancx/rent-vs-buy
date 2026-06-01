@@ -109,8 +109,7 @@ export function CostTable({ result }: CostTableProps) {
 
   function formatGainLoss(value: number | null): string {
     if (value === null) return '—'
-    const formatted = formatCurrency(Math.abs(value))
-    return value >= 0 ? `+${formatted}` : `-${formatted}`
+    return formatCurrency(value)
   }
 
   return (
