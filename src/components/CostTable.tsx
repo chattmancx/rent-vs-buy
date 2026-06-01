@@ -9,13 +9,17 @@ type RowDef = {
   label: string
   owner: number | null
   renter: number | null
-  variant?: 'normal' | 'subtotal' | 'networth'
+  variant?: 'normal' | 'subtotal' | 'networth' | 'gainloss'
 }
 
 export function CostTable({ result }: CostTableProps) {
   const { totals, verdict, inputs } = result
   const lastRow = result.monthly_schedule[result.monthly_schedule.length - 1] ?? null
   const downPayment = inputs.ownership.purchase_price * (inputs.ownership.down_payment_pct / 100)
+
+  const ownerNetGainLoss =
+    totals.owner_final_net_worth - (totals.total_ownership_outflows + downPayment)
+  const renterNetGainLoss = totals.renter_final_net_worth - totals.total_rentership_outflows
 
   const rows: RowDef[] = [
     { label: 'Down payment', owner: downPayment, renter: null },
@@ -55,23 +59,36 @@ export function CostTable({ result }: CostTableProps) {
       renter: totals.renter_final_net_worth,
       variant: 'networth',
     },
+    {
+      label: ownerNetGainLoss >= 0 && renterNetGainLoss >= 0
+        ? 'Net gain'
+        : ownerNetGainLoss < 0 && renterNetGainLoss < 0
+          ? 'Net loss'
+          : 'Net gain / loss',
+      owner: ownerNetGainLoss,
+      renter: renterNetGainLoss,
+      variant: 'gainloss',
+    },
   ]
 
   function rowClass(variant: RowDef['variant']) {
     if (variant === 'subtotal') return 'border-t-2 border-gray-300 bg-gray-50'
     if (variant === 'networth') return 'border-t-2 border-gray-400'
+    if (variant === 'gainloss') return 'border-t border-gray-200 bg-gray-50'
     return 'border-t border-gray-100'
   }
 
   function cellClass(variant: RowDef['variant']) {
     if (variant === 'subtotal') return 'py-2 px-3 text-sm font-semibold text-right tabular-nums'
     if (variant === 'networth') return 'py-2 px-3 text-base font-bold text-right tabular-nums'
+    if (variant === 'gainloss') return 'py-2 px-3 text-sm font-semibold text-right tabular-nums'
     return 'py-2 px-3 text-sm text-right tabular-nums'
   }
 
   function labelClass(variant: RowDef['variant']) {
     if (variant === 'subtotal') return 'py-2 px-3 text-sm font-semibold text-gray-700'
     if (variant === 'networth') return 'py-2 px-3 text-base font-bold text-gray-900'
+    if (variant === 'gainloss') return 'py-2 px-3 text-sm font-semibold text-gray-700'
     return 'py-2 px-3 text-sm text-gray-600'
   }
 
@@ -82,6 +99,17 @@ export function CostTable({ result }: CostTableProps) {
       (side === 'owner' && verdict.winner === 'buying') ||
       (side === 'renter' && verdict.winner === 'renting')
     return sideWins ? 'text-green-700' : ''
+  }
+
+  function gainLossColor(value: number | null) {
+    if (value === null) return ''
+    return value >= 0 ? 'text-green-700' : 'text-red-700'
+  }
+
+  function formatGainLoss(value: number | null): string {
+    if (value === null) return '—'
+    const formatted = formatCurrency(Math.abs(value))
+    return value >= 0 ? `+${formatted}` : `-${formatted}`
   }
 
   return (
@@ -107,12 +135,25 @@ export function CostTable({ result }: CostTableProps) {
           {rows.map((row) => (
             <tr key={row.label} className={rowClass(row.variant)}>
               <td className={labelClass(row.variant)}>{row.label}</td>
-              <td className={`${cellClass(row.variant)} ${winnerColor('owner', row.variant)}`}>
-                {row.owner !== null ? formatCurrency(row.owner) : '—'}
-              </td>
-              <td className={`${cellClass(row.variant)} ${winnerColor('renter', row.variant)}`}>
-                {row.renter !== null ? formatCurrency(row.renter) : '—'}
-              </td>
+              {row.variant === 'gainloss' ? (
+                <>
+                  <td className={`${cellClass(row.variant)} ${gainLossColor(row.owner)}`}>
+                    {formatGainLoss(row.owner)}
+                  </td>
+                  <td className={`${cellClass(row.variant)} ${gainLossColor(row.renter)}`}>
+                    {formatGainLoss(row.renter)}
+                  </td>
+                </>
+              ) : (
+                <>
+                  <td className={`${cellClass(row.variant)} ${winnerColor('owner', row.variant)}`}>
+                    {row.owner !== null ? formatCurrency(row.owner) : '—'}
+                  </td>
+                  <td className={`${cellClass(row.variant)} ${winnerColor('renter', row.variant)}`}>
+                    {row.renter !== null ? formatCurrency(row.renter) : '—'}
+                  </td>
+                </>
+              )}
             </tr>
           ))}
         </tbody>

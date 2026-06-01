@@ -10,52 +10,47 @@ describe('exportToCsv', () => {
     expect(csv).toContain('Rent vs. Buy Analysis')
   })
 
-  it('contains the correct yearly summary column headers', () => {
+  it('contains the correct monthly schedule column headers', () => {
     const result = computeScenario(DEFAULT_INPUT)
     const csv = exportToCsv(result)
+    expect(csv).toContain('Month')
     expect(csv).toContain('Year')
+    expect(csv).toContain('Owner Total Monthly Cost')
+    expect(csv).toContain('Renter Total Monthly Cost')
     expect(csv).toContain('Owner Net Worth')
     expect(csv).toContain('Renter Net Worth')
-    expect(csv).toContain('Owner Costs This Year')
-    expect(csv).toContain('Renter Costs This Year')
-    expect(csv).toContain('Owner Equity in Home')
   })
 
-  it('contains one data row per horizon year', () => {
-    const horizonYears = DEFAULT_INPUT.shared.horizon_years
+  it('contains one data row per month in the horizon', () => {
+    const horizonMonths = DEFAULT_INPUT.shared.horizon_years * 12
     const result = computeScenario(DEFAULT_INPUT)
     const csv = exportToCsv(result)
     const lines = csv.split('\n')
-    // Find header row index
-    const headerIdx = lines.findIndex((l) => l.startsWith('Year,'))
+    const headerIdx = lines.findIndex((l) => l.startsWith('Month,'))
     expect(headerIdx).toBeGreaterThan(-1)
-    // Count data rows immediately following the header
     let dataRows = 0
     for (let i = headerIdx + 1; i < lines.length; i++) {
       const line = lines[i]
       if (line === undefined || line === '') break
       dataRows++
     }
-    expect(dataRows).toBe(horizonYears)
+    expect(dataRows).toBe(horizonMonths)
   })
 
-  it('first data row is year 1 and last row matches horizon_years', () => {
-    const horizonYears = DEFAULT_INPUT.shared.horizon_years
+  it('first data row is month 1 year 1 and last row matches horizon', () => {
+    const horizonMonths = DEFAULT_INPUT.shared.horizon_years * 12
     const result = computeScenario(DEFAULT_INPUT)
     const csv = exportToCsv(result)
     const lines = csv.split('\n')
-    const headerIdx = lines.findIndex((l) => l.startsWith('Year,'))
+    const headerIdx = lines.findIndex((l) => l.startsWith('Month,'))
     const firstDataLine = lines[headerIdx + 1]
-    const lastDataLine = lines[headerIdx + horizonYears]
+    const lastDataLine = lines[headerIdx + horizonMonths]
     expect(firstDataLine).toMatch(/^1,/)
-    expect(lastDataLine).toMatch(new RegExp(`^${horizonYears},`))
+    expect(lastDataLine).toMatch(new RegExp(`^${horizonMonths},`))
   })
 
   it('prefixes cells starting with = with a single quote', () => {
     expect(exportToCsv).toBeDefined()
-    // Test the sanitizer directly via a crafted scenario label isn't possible,
-    // so we verify the pattern by constructing a cell value manually using
-    // the same logic used in csv-export.
     const dangerous = '=SUM(A1:A10)'
     const str = String(dangerous)
     const sanitized = /^[=+\-@\t\r]/.test(str) ? `'${str}` : str

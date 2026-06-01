@@ -1,4 +1,5 @@
 import type { ScenarioInput, OwnershipInput, RentalInput, SharedInput } from '../engine'
+import { toPercent } from '../lib/format'
 import { InputField } from './InputField'
 import { Tooltip } from './Tooltip'
 
@@ -88,7 +89,7 @@ export function BasicInputs({
 
       <InputField
         label="Investment Return"
-        value={shared.investment_return_rate * 100}
+        value={toPercent(shared.investment_return_rate)}
         onChange={(v) => updateShared({ investment_return_rate: v / 100 })}
         suffix="%/yr"
         min={0}

@@ -28,7 +28,7 @@ export function ExportPanel({ result, input, onImport }: Props) {
   }
 
   const handleJsonDownload = () => {
-    downloadFile(exportToJson(input), 'rent-vs-buy-scenario.json', 'application/json')
+    downloadFile(exportToJson(input), 'rent-vs-buy-scenario.txt', 'text/plain')
   }
 
   const handleImportClick = () => {
@@ -65,15 +65,15 @@ export function ExportPanel({ result, input, onImport }: Props) {
           Download CSV
         </button>
         <button type="button" onClick={handleJsonDownload} className={btnClass}>
-          Download JSON
+          Save Scenario
         </button>
         <button type="button" onClick={handleImportClick} className={btnClass}>
-          Import JSON
+          Load Scenario
         </button>
         <input
           ref={fileInputRef}
           type="file"
-          accept=".json"
+          accept=".txt,.json"
           data-testid="json-import-input"
           className="sr-only"
           onChange={handleFileChange}
@@ -81,7 +81,7 @@ export function ExportPanel({ result, input, onImport }: Props) {
       </div>
       {importError !== null && (
         <p className="mt-2 text-sm text-red-600" role="alert">
-          {importError}
+          Could not load: invalid or unrecognized scenario file.
         </p>
       )}
     </div>

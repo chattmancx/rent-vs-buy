@@ -1,4 +1,5 @@
 import type { ScenarioInput, OwnershipInput, RentalInput, SharedInput } from '../engine'
+import { toPercent } from '../lib/format'
 import { InputField } from './InputField'
 import { InputSection } from './InputSection'
 
@@ -126,7 +127,7 @@ export function AdvancedInputs({
       <InputSection title="Appreciation & Escalation">
         <InputField
           label="Home Appreciation"
-          value={ownership.home_appreciation_rate * 100}
+          value={toPercent(ownership.home_appreciation_rate)}
           onChange={(v) => updateOwnership({ home_appreciation_rate: v / 100 })}
           suffix="%/yr"
           min={-50}
@@ -136,7 +137,7 @@ export function AdvancedInputs({
         />
         <InputField
           label="HOA Escalation"
-          value={ownership.hoa_increase_rate * 100}
+          value={toPercent(ownership.hoa_increase_rate)}
           onChange={(v) => updateOwnership({ hoa_increase_rate: v / 100 })}
           suffix="%/yr"
           min={-50}
@@ -145,7 +146,7 @@ export function AdvancedInputs({
         />
         <InputField
           label="Maintenance Escalation"
-          value={ownership.maintenance_increase_rate * 100}
+          value={toPercent(ownership.maintenance_increase_rate)}
           onChange={(v) => updateOwnership({ maintenance_increase_rate: v / 100 })}
           suffix="%/yr"
           min={-50}
@@ -154,7 +155,7 @@ export function AdvancedInputs({
         />
         <InputField
           label="Insurance Escalation"
-          value={ownership.insurance_increase_rate * 100}
+          value={toPercent(ownership.insurance_increase_rate)}
           onChange={(v) => updateOwnership({ insurance_increase_rate: v / 100 })}
           suffix="%/yr"
           min={-50}
@@ -163,7 +164,7 @@ export function AdvancedInputs({
         />
         <InputField
           label="Rent Escalation"
-          value={rental.rent_increase_rate * 100}
+          value={toPercent(rental.rent_increase_rate)}
           onChange={(v) => updateRental({ rent_increase_rate: v / 100 })}
           suffix="%/yr"
           min={-50}
@@ -183,7 +184,7 @@ export function AdvancedInputs({
         />
         <InputField
           label="Utilities Escalation"
-          value={shared.utilities_increase_rate * 100}
+          value={toPercent(shared.utilities_increase_rate)}
           onChange={(v) => updateShared({ utilities_increase_rate: v / 100 })}
           suffix="%/yr"
           min={-50}
@@ -204,7 +205,7 @@ export function AdvancedInputs({
         />
         <InputField
           label="Pet Rent Escalation"
-          value={rental.pet_rent_increase_rate * 100}
+          value={toPercent(rental.pet_rent_increase_rate)}
           onChange={(v) => updateRental({ pet_rent_increase_rate: v / 100 })}
           suffix="%/yr"
           min={-50}
@@ -222,7 +223,7 @@ export function AdvancedInputs({
         />
         <InputField
           label="Parking Escalation"
-          value={rental.parking_increase_rate * 100}
+          value={toPercent(rental.parking_increase_rate)}
           onChange={(v) => updateRental({ parking_increase_rate: v / 100 })}
           suffix="%/yr"
           min={-50}

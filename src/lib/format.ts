@@ -1,3 +1,7 @@
+export function toPercent(decimal: number): number {
+  return parseFloat((decimal * 100).toPrecision(10))
+}
+
 const USD = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD',

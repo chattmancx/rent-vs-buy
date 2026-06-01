@@ -20,12 +20,12 @@ describe('ExportPanel', () => {
     expect(screen.getByText('Export & Import')).toBeTruthy()
   })
 
-  it('renders Download CSV, Download JSON, and Import JSON buttons', () => {
+  it('renders Download CSV, Save Scenario, and Load Scenario buttons', () => {
     const result = computeScenario(DEFAULT_INPUT)
     render(<ExportPanel result={result} input={DEFAULT_INPUT} onImport={vi.fn()} />)
     expect(screen.getByRole('button', { name: /download csv/i })).toBeTruthy()
-    expect(screen.getByRole('button', { name: /download json/i })).toBeTruthy()
-    expect(screen.getByRole('button', { name: /import json/i })).toBeTruthy()
+    expect(screen.getByRole('button', { name: /save scenario/i })).toBeTruthy()
+    expect(screen.getByRole('button', { name: /load scenario/i })).toBeTruthy()
   })
 
   it('calls URL.createObjectURL with a Blob when Download CSV is clicked', () => {
@@ -35,10 +35,10 @@ describe('ExportPanel', () => {
     expect(URL.createObjectURL).toHaveBeenCalledWith(expect.any(Blob))
   })
 
-  it('calls URL.createObjectURL with a Blob when Download JSON is clicked', () => {
+  it('calls URL.createObjectURL with a Blob when Save Scenario is clicked', () => {
     const result = computeScenario(DEFAULT_INPUT)
     render(<ExportPanel result={result} input={DEFAULT_INPUT} onImport={vi.fn()} />)
-    fireEvent.click(screen.getByRole('button', { name: /download json/i }))
+    fireEvent.click(screen.getByRole('button', { name: /save scenario/i }))
     expect(URL.createObjectURL).toHaveBeenCalledWith(expect.any(Blob))
   })
 

@@ -1,4 +1,4 @@
-import { useId } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { Tooltip } from './Tooltip'
 
 type InputFieldProps = {
@@ -25,11 +25,29 @@ export function InputField({
   suffix,
 }: InputFieldProps) {
   const inputId = useId()
+  const [raw, setRaw] = useState(() => String(value))
+  const prevValueRef = useRef(value)
+
+  // Sync display when value changes from outside (import, URL state).
+  // Guard with prevValueRef so user-initiated clearing isn't overwritten mid-edit.
+  useEffect(() => {
+    if (prevValueRef.current !== value) {
+      prevValueRef.current = value
+      setRaw(String(value))
+    }
+  }, [value])
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setRaw(e.target.value)
     const parsed = parseFloat(e.target.value)
     if (isFinite(parsed)) {
       onChange(parsed)
+    }
+  }
+
+  function handleBlur() {
+    if (!isFinite(parseFloat(raw))) {
+      setRaw(String(value))
     }
   }
 
@@ -54,11 +72,12 @@ export function InputField({
         <input
           id={inputId}
           type="number"
-          value={value}
+          value={raw}
           min={min}
           max={max}
           step={step ?? 'any'}
           onChange={handleChange}
+          onBlur={handleBlur}
           className="w-full rounded border border-gray-300 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         {suffix !== undefined && <span className="text-sm text-gray-500">{suffix}</span>}

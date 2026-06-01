@@ -55,12 +55,14 @@ export default function App() {
             updateShared={updateShared}
           />
           <InputSection title="Advanced Options">
-            <AdvancedInputs
-              input={input}
-              updateOwnership={updateOwnership}
-              updateRental={updateRental}
-              updateShared={updateShared}
-            />
+            <div className="col-span-full space-y-2 border-l-2 border-gray-200 pl-4">
+              <AdvancedInputs
+                input={input}
+                updateOwnership={updateOwnership}
+                updateRental={updateRental}
+                updateShared={updateShared}
+              />
+            </div>
           </InputSection>
           <BreakEvenChart result={result} updateShared={updateShared} />
           <SensitivityStrip input={input} result={result} />
