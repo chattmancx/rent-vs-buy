@@ -1,0 +1,1639 @@
+{
+  "Alabama": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.02
+      },
+      {
+        "floor": 500,
+        "rate": 0.04
+      },
+      {
+        "floor": 3000,
+        "rate": 0.05
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.02
+      },
+      {
+        "floor": 1000,
+        "rate": 0.04
+      },
+      {
+        "floor": 6000,
+        "rate": 0.05
+      }
+    ],
+    "single_standard_deduction": 3000,
+    "mfj_standard_deduction": 8500
+  },
+  "Alaska": {
+    "no_tax": true,
+    "single": [],
+    "married_filing_jointly": [],
+    "single_standard_deduction": null,
+    "mfj_standard_deduction": null
+  },
+  "Arizona": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.025
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.025
+      }
+    ],
+    "single_standard_deduction": 8350,
+    "mfj_standard_deduction": 16700
+  },
+  "Arkansas": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.02
+      },
+      {
+        "floor": 4600,
+        "rate": 0.039
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.02
+      },
+      {
+        "floor": 4600,
+        "rate": 0.039
+      }
+    ],
+    "single_standard_deduction": 2470,
+    "mfj_standard_deduction": 4940
+  },
+  "California": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.01
+      },
+      {
+        "floor": 11079,
+        "rate": 0.02
+      },
+      {
+        "floor": 26264,
+        "rate": 0.04
+      },
+      {
+        "floor": 41452,
+        "rate": 0.06
+      },
+      {
+        "floor": 57542,
+        "rate": 0.08
+      },
+      {
+        "floor": 72724,
+        "rate": 0.093
+      },
+      {
+        "floor": 371479,
+        "rate": 0.103
+      },
+      {
+        "floor": 445771,
+        "rate": 0.113
+      },
+      {
+        "floor": 742953,
+        "rate": 0.123
+      },
+      {
+        "floor": 1000000,
+        "rate": 0.133
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.01
+      },
+      {
+        "floor": 22158,
+        "rate": 0.02
+      },
+      {
+        "floor": 52528,
+        "rate": 0.04
+      },
+      {
+        "floor": 82904,
+        "rate": 0.06
+      },
+      {
+        "floor": 115084,
+        "rate": 0.08
+      },
+      {
+        "floor": 145448,
+        "rate": 0.093
+      },
+      {
+        "floor": 742958,
+        "rate": 0.103
+      },
+      {
+        "floor": 891542,
+        "rate": 0.113
+      },
+      {
+        "floor": 1000000,
+        "rate": 0.123
+      },
+      {
+        "floor": 1485906,
+        "rate": 0.133
+      }
+    ],
+    "single_standard_deduction": 5540,
+    "mfj_standard_deduction": 11080
+  },
+  "Colorado": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.044
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.044
+      }
+    ],
+    "single_standard_deduction": 16100,
+    "mfj_standard_deduction": 32200
+  },
+  "Connecticut": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.02
+      },
+      {
+        "floor": 10000,
+        "rate": 0.045
+      },
+      {
+        "floor": 50000,
+        "rate": 0.055
+      },
+      {
+        "floor": 100000,
+        "rate": 0.06
+      },
+      {
+        "floor": 200000,
+        "rate": 0.065
+      },
+      {
+        "floor": 250000,
+        "rate": 0.069
+      },
+      {
+        "floor": 500000,
+        "rate": 0.0699
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.02
+      },
+      {
+        "floor": 20000,
+        "rate": 0.045
+      },
+      {
+        "floor": 100000,
+        "rate": 0.055
+      },
+      {
+        "floor": 200000,
+        "rate": 0.06
+      },
+      {
+        "floor": 400000,
+        "rate": 0.065
+      },
+      {
+        "floor": 500000,
+        "rate": 0.069
+      },
+      {
+        "floor": 1000000,
+        "rate": 0.0699
+      }
+    ],
+    "single_standard_deduction": null,
+    "mfj_standard_deduction": null
+  },
+  "Delaware": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 2000,
+        "rate": 0.022
+      },
+      {
+        "floor": 5000,
+        "rate": 0.039
+      },
+      {
+        "floor": 10000,
+        "rate": 0.048
+      },
+      {
+        "floor": 20000,
+        "rate": 0.052
+      },
+      {
+        "floor": 25000,
+        "rate": 0.0555
+      },
+      {
+        "floor": 60000,
+        "rate": 0.066
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 2000,
+        "rate": 0.022
+      },
+      {
+        "floor": 5000,
+        "rate": 0.039
+      },
+      {
+        "floor": 10000,
+        "rate": 0.048
+      },
+      {
+        "floor": 20000,
+        "rate": 0.052
+      },
+      {
+        "floor": 25000,
+        "rate": 0.0555
+      },
+      {
+        "floor": 60000,
+        "rate": 0.066
+      }
+    ],
+    "single_standard_deduction": 3250,
+    "mfj_standard_deduction": 6500
+  },
+  "Florida": {
+    "no_tax": true,
+    "single": [],
+    "married_filing_jointly": [],
+    "single_standard_deduction": null,
+    "mfj_standard_deduction": null
+  },
+  "Georgia": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.0519
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.0519
+      }
+    ],
+    "single_standard_deduction": 12000,
+    "mfj_standard_deduction": 24000
+  },
+  "Hawaii": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.014
+      },
+      {
+        "floor": 9600,
+        "rate": 0.032
+      },
+      {
+        "floor": 14400,
+        "rate": 0.055
+      },
+      {
+        "floor": 19200,
+        "rate": 0.064
+      },
+      {
+        "floor": 24000,
+        "rate": 0.068
+      },
+      {
+        "floor": 36000,
+        "rate": 0.072
+      },
+      {
+        "floor": 48000,
+        "rate": 0.076
+      },
+      {
+        "floor": 125000,
+        "rate": 0.079
+      },
+      {
+        "floor": 175000,
+        "rate": 0.0825
+      },
+      {
+        "floor": 225000,
+        "rate": 0.09
+      },
+      {
+        "floor": 275000,
+        "rate": 0.1
+      },
+      {
+        "floor": 325000,
+        "rate": 0.11
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.014
+      },
+      {
+        "floor": 19200,
+        "rate": 0.032
+      },
+      {
+        "floor": 28800,
+        "rate": 0.055
+      },
+      {
+        "floor": 38400,
+        "rate": 0.064
+      },
+      {
+        "floor": 48000,
+        "rate": 0.068
+      },
+      {
+        "floor": 72000,
+        "rate": 0.072
+      },
+      {
+        "floor": 96000,
+        "rate": 0.076
+      },
+      {
+        "floor": 250000,
+        "rate": 0.079
+      },
+      {
+        "floor": 350000,
+        "rate": 0.0825
+      },
+      {
+        "floor": 450000,
+        "rate": 0.09
+      },
+      {
+        "floor": 550000,
+        "rate": 0.1
+      },
+      {
+        "floor": 650000,
+        "rate": 0.11
+      }
+    ],
+    "single_standard_deduction": 4400,
+    "mfj_standard_deduction": 8800
+  },
+  "Idaho": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 4811,
+        "rate": 0.053
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 9622,
+        "rate": 0.053
+      }
+    ],
+    "single_standard_deduction": 16100,
+    "mfj_standard_deduction": 32200
+  },
+  "Illinois": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.0495
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.0495
+      }
+    ],
+    "single_standard_deduction": null,
+    "mfj_standard_deduction": null
+  },
+  "Indiana": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.0295
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.0295
+      }
+    ],
+    "single_standard_deduction": null,
+    "mfj_standard_deduction": null
+  },
+  "Iowa": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.038
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.038
+      }
+    ],
+    "single_standard_deduction": 16100,
+    "mfj_standard_deduction": 32200
+  },
+  "Kansas": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.052
+      },
+      {
+        "floor": 23000,
+        "rate": 0.0558
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.052
+      },
+      {
+        "floor": 46000,
+        "rate": 0.0558
+      }
+    ],
+    "single_standard_deduction": 3605,
+    "mfj_standard_deduction": 8240
+  },
+  "Kentucky": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.035
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.035
+      }
+    ],
+    "single_standard_deduction": 3360,
+    "mfj_standard_deduction": 3360
+  },
+  "Louisiana": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.03
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.03
+      }
+    ],
+    "single_standard_deduction": 12875,
+    "mfj_standard_deduction": 25750
+  },
+  "Maine": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.058
+      },
+      {
+        "floor": 27399,
+        "rate": 0.0675
+      },
+      {
+        "floor": 64849,
+        "rate": 0.0715
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.058
+      },
+      {
+        "floor": 54849,
+        "rate": 0.0675
+      },
+      {
+        "floor": 129749,
+        "rate": 0.0715
+      }
+    ],
+    "single_standard_deduction": 8350,
+    "mfj_standard_deduction": 16700
+  },
+  "Maryland": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.02
+      },
+      {
+        "floor": 1000,
+        "rate": 0.03
+      },
+      {
+        "floor": 2000,
+        "rate": 0.04
+      },
+      {
+        "floor": 3000,
+        "rate": 0.0475
+      },
+      {
+        "floor": 100000,
+        "rate": 0.05
+      },
+      {
+        "floor": 125000,
+        "rate": 0.0525
+      },
+      {
+        "floor": 150000,
+        "rate": 0.055
+      },
+      {
+        "floor": 250000,
+        "rate": 0.0575
+      },
+      {
+        "floor": 500000,
+        "rate": 0.0625
+      },
+      {
+        "floor": 1000000,
+        "rate": 0.065
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.02
+      },
+      {
+        "floor": 1000,
+        "rate": 0.03
+      },
+      {
+        "floor": 2000,
+        "rate": 0.04
+      },
+      {
+        "floor": 3000,
+        "rate": 0.0475
+      },
+      {
+        "floor": 150000,
+        "rate": 0.05
+      },
+      {
+        "floor": 175000,
+        "rate": 0.0525
+      },
+      {
+        "floor": 225000,
+        "rate": 0.055
+      },
+      {
+        "floor": 300000,
+        "rate": 0.0575
+      },
+      {
+        "floor": 600000,
+        "rate": 0.0625
+      },
+      {
+        "floor": 1200000,
+        "rate": 0.065
+      }
+    ],
+    "single_standard_deduction": 3350,
+    "mfj_standard_deduction": 6700
+  },
+  "Massachusetts": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.05
+      },
+      {
+        "floor": 1083150,
+        "rate": 0.09
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.05
+      },
+      {
+        "floor": 1083150,
+        "rate": 0.09
+      }
+    ],
+    "single_standard_deduction": null,
+    "mfj_standard_deduction": null
+  },
+  "Michigan": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.0425
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.0425
+      }
+    ],
+    "single_standard_deduction": null,
+    "mfj_standard_deduction": null
+  },
+  "Minnesota": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.0535
+      },
+      {
+        "floor": 33310,
+        "rate": 0.068
+      },
+      {
+        "floor": 109430,
+        "rate": 0.0785
+      },
+      {
+        "floor": 203150,
+        "rate": 0.0985
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.0535
+      },
+      {
+        "floor": 48700,
+        "rate": 0.068
+      },
+      {
+        "floor": 193480,
+        "rate": 0.0785
+      },
+      {
+        "floor": 337930,
+        "rate": 0.0985
+      }
+    ],
+    "single_standard_deduction": 15300,
+    "mfj_standard_deduction": 30600
+  },
+  "Mississippi": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 10000,
+        "rate": 0.04
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 10000,
+        "rate": 0.04
+      }
+    ],
+    "single_standard_deduction": 2300,
+    "mfj_standard_deduction": 4600
+  },
+  "Missouri": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 1348,
+        "rate": 0.02
+      },
+      {
+        "floor": 2696,
+        "rate": 0.025
+      },
+      {
+        "floor": 4044,
+        "rate": 0.03
+      },
+      {
+        "floor": 5392,
+        "rate": 0.035
+      },
+      {
+        "floor": 6740,
+        "rate": 0.04
+      },
+      {
+        "floor": 8088,
+        "rate": 0.045
+      },
+      {
+        "floor": 9436,
+        "rate": 0.047
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 1348,
+        "rate": 0.02
+      },
+      {
+        "floor": 2696,
+        "rate": 0.025
+      },
+      {
+        "floor": 4044,
+        "rate": 0.03
+      },
+      {
+        "floor": 5392,
+        "rate": 0.035
+      },
+      {
+        "floor": 6740,
+        "rate": 0.04
+      },
+      {
+        "floor": 8088,
+        "rate": 0.045
+      },
+      {
+        "floor": 9436,
+        "rate": 0.047
+      }
+    ],
+    "single_standard_deduction": 16100,
+    "mfj_standard_deduction": 32200
+  },
+  "Montana": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.047
+      },
+      {
+        "floor": 47500,
+        "rate": 0.0565
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.047
+      },
+      {
+        "floor": 95000,
+        "rate": 0.0565
+      }
+    ],
+    "single_standard_deduction": 16100,
+    "mfj_standard_deduction": 32200
+  },
+  "Nebraska": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.0246
+      },
+      {
+        "floor": 4130,
+        "rate": 0.0351
+      },
+      {
+        "floor": 24760,
+        "rate": 0.0455
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.0246
+      },
+      {
+        "floor": 8250,
+        "rate": 0.0351
+      },
+      {
+        "floor": 49530,
+        "rate": 0.0455
+      }
+    ],
+    "single_standard_deduction": 8850,
+    "mfj_standard_deduction": 17700
+  },
+  "Nevada": {
+    "no_tax": true,
+    "single": [],
+    "married_filing_jointly": [],
+    "single_standard_deduction": null,
+    "mfj_standard_deduction": null
+  },
+  "New Hampshire": {
+    "no_tax": true,
+    "single": [],
+    "married_filing_jointly": [],
+    "single_standard_deduction": null,
+    "mfj_standard_deduction": null
+  },
+  "New Jersey": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.014
+      },
+      {
+        "floor": 20000,
+        "rate": 0.0175
+      },
+      {
+        "floor": 35000,
+        "rate": 0.035
+      },
+      {
+        "floor": 40000,
+        "rate": 0.05525
+      },
+      {
+        "floor": 75000,
+        "rate": 0.0637
+      },
+      {
+        "floor": 500000,
+        "rate": 0.0897
+      },
+      {
+        "floor": 1000000,
+        "rate": 0.1075
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.014
+      },
+      {
+        "floor": 20000,
+        "rate": 0.0175
+      },
+      {
+        "floor": 50000,
+        "rate": 0.0245
+      },
+      {
+        "floor": 70000,
+        "rate": 0.035
+      },
+      {
+        "floor": 80000,
+        "rate": 0.05525
+      },
+      {
+        "floor": 150000,
+        "rate": 0.0637
+      },
+      {
+        "floor": 500000,
+        "rate": 0.0897
+      },
+      {
+        "floor": 1000000,
+        "rate": 0.1075
+      }
+    ],
+    "single_standard_deduction": null,
+    "mfj_standard_deduction": null
+  },
+  "New Mexico": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.015
+      },
+      {
+        "floor": 5500,
+        "rate": 0.032
+      },
+      {
+        "floor": 16500,
+        "rate": 0.043
+      },
+      {
+        "floor": 33500,
+        "rate": 0.047
+      },
+      {
+        "floor": 66500,
+        "rate": 0.049
+      },
+      {
+        "floor": 210000,
+        "rate": 0.059
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.015
+      },
+      {
+        "floor": 8000,
+        "rate": 0.032
+      },
+      {
+        "floor": 25000,
+        "rate": 0.043
+      },
+      {
+        "floor": 50000,
+        "rate": 0.047
+      },
+      {
+        "floor": 100000,
+        "rate": 0.049
+      },
+      {
+        "floor": 315000,
+        "rate": 0.059
+      }
+    ],
+    "single_standard_deduction": 16100,
+    "mfj_standard_deduction": 32200
+  },
+  "New York": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.039
+      },
+      {
+        "floor": 8500,
+        "rate": 0.044
+      },
+      {
+        "floor": 11700,
+        "rate": 0.0515
+      },
+      {
+        "floor": 13900,
+        "rate": 0.054
+      },
+      {
+        "floor": 80650,
+        "rate": 0.059
+      },
+      {
+        "floor": 215400,
+        "rate": 0.0685
+      },
+      {
+        "floor": 1077550,
+        "rate": 0.0965
+      },
+      {
+        "floor": 5000000,
+        "rate": 0.103
+      },
+      {
+        "floor": 25000000,
+        "rate": 0.109
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.039
+      },
+      {
+        "floor": 17150,
+        "rate": 0.044
+      },
+      {
+        "floor": 23600,
+        "rate": 0.0515
+      },
+      {
+        "floor": 27900,
+        "rate": 0.054
+      },
+      {
+        "floor": 161550,
+        "rate": 0.059
+      },
+      {
+        "floor": 323200,
+        "rate": 0.0685
+      },
+      {
+        "floor": 2155350,
+        "rate": 0.0965
+      },
+      {
+        "floor": 5000000,
+        "rate": 0.103
+      },
+      {
+        "floor": 25000000,
+        "rate": 0.109
+      }
+    ],
+    "single_standard_deduction": 8000,
+    "mfj_standard_deduction": 16050
+  },
+  "North Carolina": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.0399
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.0399
+      }
+    ],
+    "single_standard_deduction": 12750,
+    "mfj_standard_deduction": 25500
+  },
+  "North Dakota": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 48475,
+        "rate": 0.0195
+      },
+      {
+        "floor": 244825,
+        "rate": 0.025
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 80975,
+        "rate": 0.0195
+      },
+      {
+        "floor": 298075,
+        "rate": 0.025
+      }
+    ],
+    "single_standard_deduction": 16100,
+    "mfj_standard_deduction": 32200
+  },
+  "Ohio": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 26050,
+        "rate": 0.0275
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 26050,
+        "rate": 0.0275
+      }
+    ],
+    "single_standard_deduction": null,
+    "mfj_standard_deduction": null
+  },
+  "Oklahoma": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 3750,
+        "rate": 0.025
+      },
+      {
+        "floor": 4900,
+        "rate": 0.035
+      },
+      {
+        "floor": 7200,
+        "rate": 0.045
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 7500,
+        "rate": 0.025
+      },
+      {
+        "floor": 9800,
+        "rate": 0.035
+      },
+      {
+        "floor": 14400,
+        "rate": 0.045
+      }
+    ],
+    "single_standard_deduction": 6350,
+    "mfj_standard_deduction": 12700
+  },
+  "Oregon": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.0475
+      },
+      {
+        "floor": 4550,
+        "rate": 0.0675
+      },
+      {
+        "floor": 11400,
+        "rate": 0.0875
+      },
+      {
+        "floor": 125000,
+        "rate": 0.099
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.0475
+      },
+      {
+        "floor": 9100,
+        "rate": 0.0675
+      },
+      {
+        "floor": 22800,
+        "rate": 0.0875
+      },
+      {
+        "floor": 250000,
+        "rate": 0.099
+      }
+    ],
+    "single_standard_deduction": 2910,
+    "mfj_standard_deduction": 5820
+  },
+  "Pennsylvania": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.0307
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.0307
+      }
+    ],
+    "single_standard_deduction": null,
+    "mfj_standard_deduction": null
+  },
+  "Rhode Island": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.0375
+      },
+      {
+        "floor": 82050,
+        "rate": 0.0475
+      },
+      {
+        "floor": 186450,
+        "rate": 0.0599
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.0375
+      },
+      {
+        "floor": 82050,
+        "rate": 0.0475
+      },
+      {
+        "floor": 186450,
+        "rate": 0.0599
+      }
+    ],
+    "single_standard_deduction": 11200,
+    "mfj_standard_deduction": 22400
+  },
+  "South Carolina": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0
+      },
+      {
+        "floor": 3640,
+        "rate": 0.03
+      },
+      {
+        "floor": 18230,
+        "rate": 0.06
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0
+      },
+      {
+        "floor": 3640,
+        "rate": 0.03
+      },
+      {
+        "floor": 18230,
+        "rate": 0.06
+      }
+    ],
+    "single_standard_deduction": 8350,
+    "mfj_standard_deduction": 16700
+  },
+  "South Dakota": {
+    "no_tax": true,
+    "single": [],
+    "married_filing_jointly": [],
+    "single_standard_deduction": null,
+    "mfj_standard_deduction": null
+  },
+  "Tennessee": {
+    "no_tax": true,
+    "single": [],
+    "married_filing_jointly": [],
+    "single_standard_deduction": null,
+    "mfj_standard_deduction": null
+  },
+  "Texas": {
+    "no_tax": true,
+    "single": [],
+    "married_filing_jointly": [],
+    "single_standard_deduction": null,
+    "mfj_standard_deduction": null
+  },
+  "Utah": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.045
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.045
+      }
+    ],
+    "single_standard_deduction": null,
+    "mfj_standard_deduction": null
+  },
+  "Vermont": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.0335
+      },
+      {
+        "floor": 49400,
+        "rate": 0.066
+      },
+      {
+        "floor": 119700,
+        "rate": 0.076
+      },
+      {
+        "floor": 249700,
+        "rate": 0.0875
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.0335
+      },
+      {
+        "floor": 82500,
+        "rate": 0.066
+      },
+      {
+        "floor": 199450,
+        "rate": 0.076
+      },
+      {
+        "floor": 304000,
+        "rate": 0.0875
+      }
+    ],
+    "single_standard_deduction": 7650,
+    "mfj_standard_deduction": 15300
+  },
+  "Virginia": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.02
+      },
+      {
+        "floor": 3000,
+        "rate": 0.03
+      },
+      {
+        "floor": 5000,
+        "rate": 0.05
+      },
+      {
+        "floor": 17000,
+        "rate": 0.0575
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.02
+      },
+      {
+        "floor": 3000,
+        "rate": 0.03
+      },
+      {
+        "floor": 5000,
+        "rate": 0.05
+      },
+      {
+        "floor": 17000,
+        "rate": 0.0575
+      }
+    ],
+    "single_standard_deduction": 8750,
+    "mfj_standard_deduction": 17500
+  },
+  "Washington": {
+    "no_tax": true,
+    "single": [],
+    "married_filing_jointly": [],
+    "single_standard_deduction": null,
+    "mfj_standard_deduction": null
+  },
+  "West Virginia": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.0222
+      },
+      {
+        "floor": 10000,
+        "rate": 0.0296
+      },
+      {
+        "floor": 25000,
+        "rate": 0.0333
+      },
+      {
+        "floor": 40000,
+        "rate": 0.0444
+      },
+      {
+        "floor": 60000,
+        "rate": 0.0482
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.0222
+      },
+      {
+        "floor": 10000,
+        "rate": 0.0296
+      },
+      {
+        "floor": 25000,
+        "rate": 0.0333
+      },
+      {
+        "floor": 40000,
+        "rate": 0.0444
+      },
+      {
+        "floor": 60000,
+        "rate": 0.0482
+      }
+    ],
+    "single_standard_deduction": null,
+    "mfj_standard_deduction": null
+  },
+  "Wisconsin": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.035
+      },
+      {
+        "floor": 15110,
+        "rate": 0.044
+      },
+      {
+        "floor": 51950,
+        "rate": 0.053
+      },
+      {
+        "floor": 332720,
+        "rate": 0.0765
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.035
+      },
+      {
+        "floor": 20150,
+        "rate": 0.044
+      },
+      {
+        "floor": 69260,
+        "rate": 0.053
+      },
+      {
+        "floor": 443630,
+        "rate": 0.0765
+      }
+    ],
+    "single_standard_deduction": 13960,
+    "mfj_standard_deduction": 25840
+  },
+  "Wyoming": {
+    "no_tax": true,
+    "single": [],
+    "married_filing_jointly": [],
+    "single_standard_deduction": null,
+    "mfj_standard_deduction": null
+  },
+  "D.C.": {
+    "no_tax": false,
+    "single": [
+      {
+        "floor": 0,
+        "rate": 0.04
+      },
+      {
+        "floor": 10000,
+        "rate": 0.06
+      },
+      {
+        "floor": 40000,
+        "rate": 0.065
+      },
+      {
+        "floor": 60000,
+        "rate": 0.085
+      },
+      {
+        "floor": 250000,
+        "rate": 0.0925
+      },
+      {
+        "floor": 500000,
+        "rate": 0.0975
+      },
+      {
+        "floor": 1000000,
+        "rate": 0.1075
+      }
+    ],
+    "married_filing_jointly": [
+      {
+        "floor": 0,
+        "rate": 0.04
+      },
+      {
+        "floor": 10000,
+        "rate": 0.06
+      },
+      {
+        "floor": 40000,
+        "rate": 0.065
+      },
+      {
+        "floor": 60000,
+        "rate": 0.085
+      },
+      {
+        "floor": 250000,
+        "rate": 0.0925
+      },
+      {
+        "floor": 500000,
+        "rate": 0.0975
+      },
+      {
+        "floor": 1000000,
+        "rate": 0.1075
+      }
+    ],
+    "single_standard_deduction": 16100,
+    "mfj_standard_deduction": 32200
+  }
+}
