@@ -24,7 +24,7 @@ type StateBracketSchedule = {
 // State name mapping (canonical → Excel abbreviation prefix)
 // ---------------------------------------------------------------------------
 
-const STATE_ABBREV_MAP: Record<string, string> = {
+export const STATE_ABBREV_MAP: Record<string, string> = {
   Alabama: 'Ala.',
   Alaska: 'Alaska',
   Arizona: 'Ariz.',
@@ -126,7 +126,6 @@ for (const [state, raw] of Object.entries(RAW_BRACKETS as Record<string, RawEntr
 // PDF lookup stub — returns null always; filled in by a future stage
 // ---------------------------------------------------------------------------
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function lookupStatePdfBrackets(_canonicalState: string): StateBracketSchedule | null {
   // TODO: scan reference/income-tax-brackets/ for [STATE]-[YYYYMMDD].pdf
   // Parse PDF, extract brackets, return StateBracketSchedule

@@ -50,6 +50,8 @@ export type TaxInput = {
   filing_status: FilingStatus
   gross_annual_income: number
   state_income_tax_annual: number // USD; used for SALT cap calculation only
+  state: string // canonical state name e.g. 'Maryland'; '' = not selected
+  itemizes: boolean // if false, forces tax benefit to zero regardless of math
 }
 
 export type ScenarioInput = {

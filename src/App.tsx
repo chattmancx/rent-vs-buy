@@ -1,13 +1,12 @@
 import { useScenario } from './hooks/useScenario'
 import { BasicInputs } from './components/BasicInputs'
 import { AdvancedInputs } from './components/AdvancedInputs'
-import { DebugPanel } from './components/DebugPanel'
 import { HeadlineResult } from './components/HeadlineResult'
 import { CostTable } from './components/CostTable'
-import { ExportPanel } from './components/ExportPanel'
 import { InputSection } from './components/InputSection'
 import { BreakEvenChart } from './components/BreakEvenChart'
 import { SensitivityStrip } from './components/SensitivityStrip'
+import { TaxInputs } from './components/TaxInputs'
 
 export default function App() {
   const {
@@ -18,7 +17,7 @@ export default function App() {
     updateOwnership,
     updateRental,
     updateShared,
-    replaceInput,
+    updateTax,
   } = useScenario()
 
   return (
@@ -64,11 +63,18 @@ export default function App() {
               />
             </div>
           </InputSection>
+          <InputSection title="Tax & Income (Expert)">
+            <div className="col-span-full space-y-2 border-l-2 border-gray-200 pl-4">
+              <TaxInputs input={input} updateTax={updateTax} />
+            </div>
+          </InputSection>
           <BreakEvenChart result={result} updateShared={updateShared} />
           <SensitivityStrip input={input} result={result} />
           <CostTable result={result} />
-          <ExportPanel result={result} input={input} onImport={replaceInput} />
-          <DebugPanel result={result} />
+          {/* ExportPanel — hidden pending PII disclosure design (Tier 3 decision) */}
+          {/* <ExportPanel result={result} input={input} onImport={replaceInput} /> */}
+          {/* DebugPanel — hidden; sidelined until further notice */}
+          {/* <DebugPanel result={result} /> */}
         </div>
       </main>
     </>

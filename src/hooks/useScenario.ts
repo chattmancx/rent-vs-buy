@@ -6,9 +6,30 @@ import type {
   OwnershipInput,
   RentalInput,
   SharedInput,
+  TaxInput,
 } from '../engine'
 import { DEFAULT_INPUT } from '../lib/defaults'
 import { encode, decode } from '../lib/url-state'
+import { estimateStateIncomeTax } from '../lib/state-tax'
+
+function toStateTaxFilingStatus(
+  status: TaxInput['filing_status'],
+): 'single' | 'married_filing_jointly' {
+  return status === 'married_filing_jointly' ? 'married_filing_jointly' : 'single'
+}
+
+function computeWithTax(input: ScenarioInput): ScenarioInput {
+  const { tax } = input
+  if (!tax.taxes_enabled || tax.gross_annual_income === 0 || tax.state === '') {
+    return input
+  }
+  const estimated = estimateStateIncomeTax(
+    tax.state,
+    tax.gross_annual_income,
+    toStateTaxFilingStatus(tax.filing_status),
+  )
+  return { ...input, tax: { ...input.tax, state_income_tax_annual: estimated } }
+}
 
 type ScenarioState = {
   input: ScenarioInput
@@ -22,7 +43,8 @@ function initState(): ScenarioState {
   if (raw !== null) {
     const decoded = decode(raw)
     if (decoded !== null) {
-      return { input: decoded, result: computeScenario(decoded), urlError: false }
+      const withTax = computeWithTax(decoded)
+      return { input: withTax, result: computeScenario(withTax), urlError: false }
     }
     return { input: DEFAULT_INPUT, result: computeScenario(DEFAULT_INPUT), urlError: true }
   }
@@ -76,7 +98,19 @@ export function useScenario() {
   }, [])
 
   const replaceInput = useCallback((newInput: ScenarioInput) => {
-    setState({ input: newInput, result: computeScenario(newInput), urlError: false })
+    const withTax = computeWithTax(newInput)
+    setState({ input: withTax, result: computeScenario(withTax), urlError: false })
+  }, [])
+
+  const updateTax = useCallback((patch: Partial<TaxInput>) => {
+    setState((prev) => {
+      const merged: ScenarioInput = {
+        ...prev.input,
+        tax: { ...prev.input.tax, ...patch },
+      }
+      const withTax = computeWithTax(merged)
+      return { input: withTax, result: computeScenario(withTax), urlError: false }
+    })
   }, [])
 
   return {
@@ -87,6 +121,7 @@ export function useScenario() {
     updateOwnership,
     updateRental,
     updateShared,
+    updateTax,
     replaceInput,
   }
 }

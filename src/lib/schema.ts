@@ -53,6 +53,8 @@ const TaxSchema = z.object({
   filing_status: FilingStatusSchema,
   gross_annual_income: z.number().finite().min(0),
   state_income_tax_annual: z.number().finite().min(0),
+  state: z.string().default(''),
+  itemizes: z.boolean().default(false),
 })
 
 const DEFAULT_TAX = {
@@ -60,6 +62,8 @@ const DEFAULT_TAX = {
   filing_status: 'single' as const,
   gross_annual_income: 0,
   state_income_tax_annual: 0,
+  state: '',
+  itemizes: false,
 }
 
 export const ScenarioInputSchema = z.object({

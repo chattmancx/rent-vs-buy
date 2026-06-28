@@ -44,5 +44,7 @@ export const DEFAULT_INPUT: ScenarioInput = {
     filing_status: 'single',
     gross_annual_income: 0,
     state_income_tax_annual: 0,
+    state: '',
+    itemizes: false,
   },
 }

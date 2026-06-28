@@ -90,7 +90,8 @@ export function computeAnnualTaxBenefitBreakdown(params: {
   const { taxInput, annualMortgageInterest, annualPropertyTax, loanBalance } = params
   const zero: TaxBenefitBreakdown = { total: 0, mid_benefit: 0, salt_benefit: 0 }
 
-  if (!taxInput.taxes_enabled || taxInput.gross_annual_income === 0) return zero
+  if (!taxInput.taxes_enabled || !taxInput.itemizes || taxInput.gross_annual_income === 0)
+    return zero
 
   // Step 1 — MID proration for loans above $750K limit
   const midRatio = loanBalance > MID_LOAN_LIMIT_2026 ? MID_LOAN_LIMIT_2026 / loanBalance : 1.0
