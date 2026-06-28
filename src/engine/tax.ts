@@ -54,10 +54,12 @@ const BRACKETS_2026: Record<FilingStatus, Bracket[]> = {
   ],
 }
 
-// SALT (State and Local Tax) deduction cap — TCJA (2017), made permanent by OBBBA (2025)
-// married_filing_separately is capped at $5,000 (half of joint cap).
-export const SALT_CAP_2026 = 10_000
-export const SALT_CAP_MFS_2026 = 5_000
+// SALT (State and Local Tax) deduction cap — OBBBA (P.L. 119-21, 2025); IRS Pub. 530 (2025 Returns)
+// Cap raised from $10,000 to $40,000 (joint) / $20,000 (MFS) effective tax year 2025.
+// Phase-down: cap reduces for MAGI > $500,000 ($250,000 MFS), but not below $10,000 ($5,000 MFS).
+// Phase-down is NOT modeled here; engine uses the flat cap regardless of income level.
+export const SALT_CAP_2026 = 40_000
+export const SALT_CAP_MFS_2026 = 20_000
 
 // Mortgage interest deduction loan limit — TCJA (2017), made permanent by OBBBA (2025)
 // Only interest on the first $750,000 of acquisition debt is deductible.
