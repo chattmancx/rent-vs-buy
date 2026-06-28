@@ -39,10 +39,24 @@ export type SharedInput = {
   invest_vs_spend_ratio: number // 0.0 to 1.0
 }
 
+export type FilingStatus =
+  | 'single'
+  | 'married_filing_jointly'
+  | 'married_filing_separately'
+  | 'head_of_household'
+
+export type TaxInput = {
+  taxes_enabled: boolean
+  filing_status: FilingStatus
+  gross_annual_income: number
+  state_income_tax_annual: number // USD; used for SALT cap calculation only
+}
+
 export type ScenarioInput = {
   ownership: OwnershipInput
   rental: RentalInput
   shared: SharedInput
+  tax: TaxInput
 }
 
 export type MonthlyRow = {
@@ -76,6 +90,7 @@ export type MonthlyRow = {
   // Net worth
   owner_paper_net_worth: number // equity + investment, no selling costs
   owner_realized_net_worth: number // equity - selling costs + investment
+  tax_benefit_this_month: number // USD; owner's monthly effective cost reduction from federal tax
 }
 
 export type YearlySummary = {
@@ -101,6 +116,9 @@ export type ScenarioTotals = {
   total_ownership_outflows: number
   sale_proceeds: number
   owner_final_net_worth: number
+  total_mortgage_interest_deduction: number // USD; total MID claimed over horizon
+  total_salt_benefit: number // USD; total property tax benefit claimed (post-cap)
+  total_tax_benefit: number // USD; sum of all federal tax benefits over horizon
   // Rental totals
   total_rent_paid: number
   total_pet_rent: number

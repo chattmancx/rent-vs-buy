@@ -39,4 +39,10 @@ export const DEFAULT_INPUT: ScenarioInput = {
     investment_return_rate: 0.07,
     invest_vs_spend_ratio: 0.5,
   },
+  tax: {
+    taxes_enabled: false,
+    filing_status: 'single',
+    gross_annual_income: 0,
+    state_income_tax_annual: 0,
+  },
 }

@@ -41,10 +41,32 @@ const SharedSchema = z.object({
   invest_vs_spend_ratio: z.number().finite().min(0).max(1),
 })
 
+const FilingStatusSchema = z.enum([
+  'single',
+  'married_filing_jointly',
+  'married_filing_separately',
+  'head_of_household',
+])
+
+const TaxSchema = z.object({
+  taxes_enabled: z.boolean(),
+  filing_status: FilingStatusSchema,
+  gross_annual_income: z.number().finite().min(0),
+  state_income_tax_annual: z.number().finite().min(0),
+})
+
+const DEFAULT_TAX = {
+  taxes_enabled: false,
+  filing_status: 'single' as const,
+  gross_annual_income: 0,
+  state_income_tax_annual: 0,
+}
+
 export const ScenarioInputSchema = z.object({
   ownership: OwnershipSchema,
   rental: RentalSchema,
   shared: SharedSchema,
+  tax: TaxSchema.optional().default(DEFAULT_TAX),
 })
 
 export type ValidatedScenarioInput = z.infer<typeof ScenarioInputSchema>

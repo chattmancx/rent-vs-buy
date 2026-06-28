@@ -60,6 +60,12 @@ const SCENARIO_A: ScenarioInput = {
     investment_return_rate: 0.075,
     invest_vs_spend_ratio: 0.5,
   },
+  tax: {
+    taxes_enabled: false,
+    filing_status: 'single',
+    gross_annual_income: 0,
+    state_income_tax_annual: 0,
+  },
 }
 
 // ---------------------------------------------------------------------------
@@ -85,6 +91,12 @@ const SCENARIO_B: ScenarioInput = {
     horizon_years: 7,
     investment_return_rate: 0.08,
     invest_vs_spend_ratio: 1.0,
+  },
+  tax: {
+    taxes_enabled: false,
+    filing_status: 'single',
+    gross_annual_income: 0,
+    state_income_tax_annual: 0,
   },
 }
 
@@ -113,6 +125,12 @@ const SCENARIO_C: ScenarioInput = {
     horizon_years: 10,
     investment_return_rate: 0.085,
     invest_vs_spend_ratio: 0.8,
+  },
+  tax: {
+    taxes_enabled: false,
+    filing_status: 'single',
+    gross_annual_income: 0,
+    state_income_tax_annual: 0,
   },
 }
 
@@ -183,6 +201,12 @@ const SCENARIO_SIMPLE: ScenarioInput = {
     horizon_years: 1,
     investment_return_rate: 0,
     invest_vs_spend_ratio: 1.0,
+  },
+  tax: {
+    taxes_enabled: false,
+    filing_status: 'single',
+    gross_annual_income: 0,
+    state_income_tax_annual: 0,
   },
 }
 
@@ -304,6 +328,32 @@ describe('computeScenario — totals invariants', () => {
       result.totals.total_ownership_outflows - result.totals.total_maintenance
     expect(outflowsWithoutMaintenance).toBeLessThan(result.totals.total_ownership_outflows)
   })
+})
+
+describe('computeScenario — tax backward compatibility (taxes_enabled: false)', () => {
+  const DISABLED_TAX_SCENARIOS = [
+    ['Scenario A', SCENARIO_A],
+    ['Scenario B', SCENARIO_B],
+    ['Scenario C', SCENARIO_C],
+    ['Scenario Simple', SCENARIO_SIMPLE],
+  ] as const
+
+  for (const [name, scenario] of DISABLED_TAX_SCENARIOS) {
+    it(`${name}: total_tax_benefit is exactly 0`, () => {
+      const result = computeScenario(scenario)
+      expect(result.totals.total_tax_benefit).toBe(0)
+    })
+
+    it(`${name}: total_mortgage_interest_deduction is exactly 0`, () => {
+      const result = computeScenario(scenario)
+      expect(result.totals.total_mortgage_interest_deduction).toBe(0)
+    })
+
+    it(`${name}: total_salt_benefit is exactly 0`, () => {
+      const result = computeScenario(scenario)
+      expect(result.totals.total_salt_benefit).toBe(0)
+    })
+  }
 })
 
 describe('computeScenario — input validation', () => {

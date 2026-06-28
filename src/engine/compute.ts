@@ -14,6 +14,7 @@ import {
 } from './mortgage'
 import { escalate } from './rent'
 import { computeMonthlyInvestmentRate, growBalance } from './investment'
+import { computeAnnualTaxBenefitBreakdown } from './tax'
 
 function validateInputs(input: ScenarioInput): void {
   const allValues: number[] = [
@@ -49,6 +50,8 @@ function validateInputs(input: ScenarioInput): void {
     input.shared.horizon_years,
     input.shared.investment_return_rate,
     input.shared.invest_vs_spend_ratio,
+    input.tax.gross_annual_income,
+    input.tax.state_income_tax_annual,
   ]
 
   for (const v of allValues) {
@@ -116,11 +119,26 @@ export function computeScenario(input: ScenarioInput): ScenarioResult {
   let yearOwnerCosts = 0
   let yearRenterCosts = 0
 
+  // Tax benefit tracking
+  let yearStartLoanBalance = loanAmount
+  let monthlyTaxBenefit = 0
+  let yearInterest = 0
+  let yearPropertyTax = 0
+  let totalMidBenefit = 0
+  let totalSaltBenefit = 0
+  let totalTaxBenefit = 0
+
   const baseMonthlyInsurance = o.homeowner_insurance_annual / 12
   const baseMonthlyMaintenance = ((o.maintenance_pct_annual / 100) * o.purchase_price) / 12
 
   for (let m = 1; m <= totalMonthsHorizon; m++) {
     const yearIndex = Math.ceil(m / 12) // 1-based year
+
+    // Reset annual tax accumulators at start of each year
+    if ((m - 1) % 12 === 0) {
+      yearInterest = 0
+      yearPropertyTax = 0
+    }
 
     // Home value for this year: year 1 = purchase_price, escalates at year boundaries.
     // At horizon end (year = horizon_years), this matches purchase_price * (1+rate)^(horizon_years-1).
@@ -170,8 +188,15 @@ export function computeScenario(input: ScenarioInput): ScenarioResult {
     const renterMonthly =
       monthlyRent + monthlyPetRent + monthlyParking + monthlyRentersIns + monthlyUtils
 
+    yearInterest += interestPayment
+    yearPropertyTax += monthlyTax
+
+    // After-tax owner cost: reduces effective monthly outlay for differential/investment logic.
+    // ownerMonthly (pre-tax) is preserved for outflow totals — reflects actual cash paid.
+    const ownerMonthlyAfterTax = ownerMonthly - monthlyTaxBenefit
+
     // Monthly differential: positive = owner pays more, renter saves (and invests)
-    const differential = ownerMonthly - renterMonthly
+    const differential = ownerMonthlyAfterTax - renterMonthly
     let investedThisMonth = 0
 
     if (differential > 0) {
@@ -240,10 +265,23 @@ export function computeScenario(input: ScenarioInput): ScenarioResult {
       renter_investment_balance: renterInvestBalance,
       owner_paper_net_worth: ownerPaperNW,
       owner_realized_net_worth: ownerRealizedNW,
+      tax_benefit_this_month: monthlyTaxBenefit,
     })
 
     // Build yearly summary at the last month of each year
     if (m % 12 === 0) {
+      const taxBreakdown = computeAnnualTaxBenefitBreakdown({
+        taxInput: input.tax,
+        annualMortgageInterest: yearInterest,
+        annualPropertyTax: yearPropertyTax,
+        loanBalance: yearStartLoanBalance,
+      })
+      monthlyTaxBenefit = taxBreakdown.total / 12
+      totalMidBenefit += taxBreakdown.mid_benefit
+      totalSaltBenefit += taxBreakdown.salt_benefit
+      totalTaxBenefit += taxBreakdown.total
+      yearStartLoanBalance = remainingLoanBalance
+
       yearlySummary.push({
         year: yearIndex,
         owner_costs_this_year: yearOwnerCosts,
@@ -295,6 +333,9 @@ export function computeScenario(input: ScenarioInput): ScenarioResult {
     total_ownership_outflows: totalOwnershipOutflows,
     sale_proceeds: saleProceeds,
     owner_final_net_worth: ownerFinalNetWorth,
+    total_mortgage_interest_deduction: totalMidBenefit,
+    total_salt_benefit: totalSaltBenefit,
+    total_tax_benefit: totalTaxBenefit,
     total_rent_paid: totalRent,
     total_pet_rent: totalPetRent,
     total_parking_fees: totalParking,
