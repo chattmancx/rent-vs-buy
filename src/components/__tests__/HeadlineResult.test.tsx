@@ -3,6 +3,8 @@ import { render, screen } from '@testing-library/react'
 import { HeadlineResult } from '../HeadlineResult'
 import { computeScenario, FEDERAL_TAX_AS_OF_DATE } from '../../engine'
 import { DEFAULT_INPUT } from '../../lib/defaults'
+import { formatCurrency } from '../../lib/format'
+import { deflate } from '../../lib/inflation'
 
 const result = computeScenario(DEFAULT_INPUT)
 
@@ -14,6 +16,14 @@ const tieResult = {
 const taxEnabledResult = {
   ...result,
   inputs: { ...result.inputs, tax: { ...result.inputs.tax, taxes_enabled: true } },
+}
+
+const realDollarsResult = {
+  ...result,
+  inputs: {
+    ...result.inputs,
+    shared: { ...result.inputs.shared, real_dollars: true, inflation_rate: 0.03 },
+  },
 }
 
 describe('HeadlineResult', () => {
@@ -65,5 +75,28 @@ describe('HeadlineResult', () => {
     const note = screen.getByText(/IRS tables/)
     expect(note.className).toMatch(/text-xs/)
     expect(note.className).toMatch(/text-ink-muted/)
+  })
+
+  it('INF-6: verdict figure is deflated when real_dollars is true', () => {
+    render(<HeadlineResult result={realDollarsResult} />)
+    const expected = formatCurrency(
+      deflate(result.verdict.margin_usd, 0.03, result.inputs.shared.horizon_years),
+    )
+    expect(screen.getByText(expected)).toBeTruthy()
+  })
+
+  it('INF-7: verdict figure matches the nominal value when real_dollars is false', () => {
+    render(<HeadlineResult result={result} />)
+    expect(screen.getByText(formatCurrency(result.verdict.margin_usd))).toBeTruthy()
+  })
+
+  it('INF-8a: disclosure note is absent when real_dollars is false', () => {
+    render(<HeadlineResult result={result} />)
+    expect(screen.queryByText(/today's dollars/)).toBeNull()
+  })
+
+  it('INF-8b: disclosure note mentions "today\'s dollars" when real_dollars is true', () => {
+    render(<HeadlineResult result={realDollarsResult} />)
+    expect(screen.getByText(/today's dollars/)).toBeTruthy()
   })
 })

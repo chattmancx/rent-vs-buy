@@ -35,6 +35,8 @@ const BASE_RENTAL = {
 const BASE_SHARED = {
   utilities_monthly_base: 500,
   utilities_increase_rate: 0.06,
+  real_dollars: false,
+  inflation_rate: 0.03,
 } as const
 
 // ---------------------------------------------------------------------------
@@ -210,6 +212,8 @@ const SCENARIO_SIMPLE: ScenarioInput = {
     horizon_years: 1,
     investment_return_rate: 0,
     invest_vs_spend_ratio: 1.0,
+    real_dollars: false,
+    inflation_rate: 0.03,
   },
   tax: {
     taxes_enabled: false,

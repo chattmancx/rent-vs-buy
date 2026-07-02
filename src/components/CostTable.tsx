@@ -1,5 +1,6 @@
 import type { ScenarioResult } from '../engine'
 import { formatCurrency } from '../lib/format'
+import { deflateIfEnabled } from '../lib/inflation'
 
 type CostTableProps = {
   result: ScenarioResult
@@ -16,10 +17,15 @@ export function CostTable({ result }: CostTableProps) {
   const { totals, verdict, inputs } = result
   const lastRow = result.monthly_schedule[result.monthly_schedule.length - 1] ?? null
   const downPayment = inputs.ownership.purchase_price * (inputs.ownership.down_payment_pct / 100)
+  const { real_dollars, inflation_rate, horizon_years } = inputs.shared
 
   const ownerNetGainLoss =
     totals.owner_final_net_worth - (totals.total_ownership_outflows + downPayment)
   const renterNetGainLoss = totals.renter_final_net_worth - totals.total_rentership_outflows
+
+  function atHorizon(value: number): number {
+    return deflateIfEnabled(value, real_dollars, inflation_rate, horizon_years)
+  }
 
   const rows: RowDef[] = [
     { label: 'Down payment', owner: downPayment, renter: null },
@@ -57,12 +63,12 @@ export function CostTable({ result }: CostTableProps) {
       renter: totals.total_rentership_outflows,
       variant: 'subtotal',
     },
-    { label: 'Sale proceeds', owner: totals.sale_proceeds, renter: null },
+    { label: 'Sale proceeds', owner: atHorizon(totals.sale_proceeds), renter: null },
     ...(inputs.tax.taxes_enabled && totals.total_capital_gains_tax !== 0
       ? [
           {
             label: 'Capital gains tax',
-            owner: totals.total_capital_gains_tax,
+            owner: atHorizon(totals.total_capital_gains_tax),
             renter: null,
             variant: 'capitalgainstax' as const,
           },
@@ -70,13 +76,13 @@ export function CostTable({ result }: CostTableProps) {
       : []),
     {
       label: 'Investment portfolio',
-      owner: lastRow?.owner_investment_balance ?? 0,
-      renter: lastRow?.renter_investment_balance ?? 0,
+      owner: atHorizon(lastRow?.owner_investment_balance ?? 0),
+      renter: atHorizon(lastRow?.renter_investment_balance ?? 0),
     },
     {
       label: 'Final net worth',
-      owner: totals.owner_final_net_worth,
-      renter: totals.renter_final_net_worth,
+      owner: atHorizon(totals.owner_final_net_worth),
+      renter: atHorizon(totals.renter_final_net_worth),
       variant: 'networth',
     },
     {
@@ -86,8 +92,8 @@ export function CostTable({ result }: CostTableProps) {
           : ownerNetGainLoss < 0 && renterNetGainLoss < 0
             ? 'Net loss'
             : 'Net gain / loss',
-      owner: ownerNetGainLoss,
-      renter: renterNetGainLoss,
+      owner: atHorizon(ownerNetGainLoss),
+      renter: atHorizon(renterNetGainLoss),
       variant: 'gainloss',
     },
   ]
@@ -197,6 +203,11 @@ export function CostTable({ result }: CostTableProps) {
           ))}
         </tbody>
       </table>
+      {real_dollars && (
+        <p className="mt-3 text-xs text-ink-muted">
+          Summed costs shown in nominal dollars; horizon-end totals shown in today's dollars.
+        </p>
+      )}
     </div>
   )
 }

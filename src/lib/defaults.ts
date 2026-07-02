@@ -38,6 +38,8 @@ export const DEFAULT_INPUT: ScenarioInput = {
     horizon_years: 10,
     investment_return_rate: 0.07,
     invest_vs_spend_ratio: 0.5,
+    real_dollars: false,
+    inflation_rate: 0.03,
   },
   tax: {
     taxes_enabled: false,

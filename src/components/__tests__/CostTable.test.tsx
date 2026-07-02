@@ -3,8 +3,15 @@ import { render, screen } from '@testing-library/react'
 import { CostTable } from '../CostTable'
 import { computeScenario } from '../../engine'
 import { DEFAULT_INPUT } from '../../lib/defaults'
+import { formatCurrency } from '../../lib/format'
+import { deflate } from '../../lib/inflation'
 
 const result = computeScenario(DEFAULT_INPUT)
+
+const realDollarsResult = computeScenario({
+  ...DEFAULT_INPUT,
+  shared: { ...DEFAULT_INPUT.shared, real_dollars: true, inflation_rate: 0.03 },
+})
 
 const taxResult = computeScenario({
   ...DEFAULT_INPUT,
@@ -186,5 +193,34 @@ describe('CostTable', () => {
     expect(investmentIdx).toBeGreaterThan(-1)
     expect(saleProceedsIdx).toBeLessThan(capitalGainsIdx)
     expect(capitalGainsIdx).toBeLessThan(investmentIdx)
+  })
+
+  it('INF-11: "Final net worth" (point-in-time) is deflated when real_dollars is true', () => {
+    render(<CostTable result={realDollarsResult} />)
+    const expected = formatCurrency(
+      deflate(
+        realDollarsResult.totals.owner_final_net_worth,
+        0.03,
+        realDollarsResult.inputs.shared.horizon_years,
+      ),
+    )
+    const row = screen.getByText('Final net worth').closest('tr')
+    expect(row?.textContent).toContain(expected)
+  })
+
+  it('INF-12: "Mortgage interest" (summed outflow) stays nominal when real_dollars is true', () => {
+    render(<CostTable result={realDollarsResult} />)
+    const row = screen.getByText('Mortgage interest').closest('tr')
+    expect(row?.textContent).toContain(formatCurrency(realDollarsResult.totals.total_interest_paid))
+  })
+
+  it('INF-13: footnote is absent when real_dollars is false', () => {
+    render(<CostTable result={result} />)
+    expect(screen.queryByText(/nominal dollars/)).toBeNull()
+  })
+
+  it('INF-14: footnote renders when real_dollars is true', () => {
+    render(<CostTable result={realDollarsResult} />)
+    expect(screen.getByText(/nominal dollars/)).toBeTruthy()
   })
 })

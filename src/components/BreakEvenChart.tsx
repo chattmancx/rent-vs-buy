@@ -11,6 +11,7 @@ import {
 } from 'recharts'
 import type { ScenarioResult, SharedInput } from '../engine'
 import { formatCurrency, formatCurrencyCompact } from '../lib/format'
+import { deflateIfEnabled } from '../lib/inflation'
 
 type BreakEvenChartProps = {
   result: ScenarioResult
@@ -18,10 +19,11 @@ type BreakEvenChartProps = {
 }
 
 export function BreakEvenChart({ result, updateShared }: BreakEvenChartProps) {
+  const { real_dollars, inflation_rate } = result.inputs.shared
   const chartData = result.yearly_summary.map((row) => ({
     year: row.year,
-    owner: row.owner_net_worth,
-    renter: row.renter_net_worth,
+    owner: deflateIfEnabled(row.owner_net_worth, real_dollars, inflation_rate, row.year),
+    renter: deflateIfEnabled(row.renter_net_worth, real_dollars, inflation_rate, row.year),
   }))
 
   let crossoverYear: number | null = null

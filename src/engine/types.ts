@@ -37,6 +37,8 @@ export type SharedInput = {
   horizon_years: number // 1 to 30
   investment_return_rate: number // annual, decimal, e.g. 0.075
   invest_vs_spend_ratio: number // 0.0 to 1.0
+  real_dollars: boolean // display-only; not consumed by computeScenario — see Stage 13 brief
+  inflation_rate: number // display-only; not consumed by computeScenario — see Stage 13 brief
 }
 
 export type FilingStatus =

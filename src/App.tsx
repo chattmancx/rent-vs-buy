@@ -4,9 +4,11 @@ import { AdvancedInputs } from './components/AdvancedInputs'
 import { HeadlineResult } from './components/HeadlineResult'
 import { CostTable } from './components/CostTable'
 import { InputSection } from './components/InputSection'
+import { InputField } from './components/InputField'
 import { BreakEvenChart } from './components/BreakEvenChart'
 import { SensitivityStrip } from './components/SensitivityStrip'
 import { TaxInputs } from './components/TaxInputs'
+import { toPercent } from './lib/format'
 
 export default function App() {
   const {
@@ -90,6 +92,31 @@ export default function App() {
                     </span>
                   </label>
                 </div>
+              </div>
+            </InputSection>
+            <InputSection title="Display Options (Expert)">
+              <div className="col-span-full space-y-2 border-l-2 border-surface-rule pl-4">
+                <label className="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={input.shared.real_dollars}
+                    onChange={(e) => updateShared({ real_dollars: e.target.checked })}
+                    aria-label="Show in today's dollars"
+                    className="h-4 w-4 accent-accent"
+                  />
+                  <span className="font-medium text-ink-secondary">Show in today's dollars</span>
+                </label>
+                {input.shared.real_dollars && (
+                  <InputField
+                    label="Inflation rate assumption"
+                    value={toPercent(input.shared.inflation_rate)}
+                    onChange={(v) => updateShared({ inflation_rate: v / 100 })}
+                    min={0}
+                    max={50}
+                    step={0.1}
+                    suffix="%/yr"
+                  />
+                )}
               </div>
             </InputSection>
           </div>
