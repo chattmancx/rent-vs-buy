@@ -89,6 +89,7 @@ export function exportToCsv(result: ScenarioResult): string {
   lines.push('Key Totals')
   lines.push(row('Total Ownership Outflows', fmt(totals.total_ownership_outflows)))
   lines.push(row('Total Rentership Outflows', fmt(totals.total_rentership_outflows)))
+  lines.push(row('Federal Tax Benefit ($)', fmt(totals.total_tax_benefit)))
   lines.push(row('Sale Proceeds', fmt(totals.sale_proceeds)))
   lines.push(row('Owner Final Net Worth', fmt(totals.owner_final_net_worth)))
   lines.push(row('Renter Final Net Worth', fmt(totals.renter_final_net_worth)))

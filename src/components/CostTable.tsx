@@ -9,7 +9,7 @@ type RowDef = {
   label: string
   owner: number | null
   renter: number | null
-  variant?: 'normal' | 'subtotal' | 'networth' | 'gainloss'
+  variant?: 'normal' | 'subtotal' | 'networth' | 'gainloss' | 'taxbenefit'
 }
 
 export function CostTable({ result }: CostTableProps) {
@@ -41,6 +41,16 @@ export function CostTable({ result }: CostTableProps) {
       owner: totals.total_utilities_owner,
       renter: totals.total_utilities_renter,
     },
+    ...(inputs.tax.taxes_enabled && totals.total_tax_benefit !== 0
+      ? [
+          {
+            label: 'Federal tax benefit',
+            owner: -totals.total_tax_benefit,
+            renter: null,
+            variant: 'taxbenefit' as const,
+          },
+        ]
+      : []),
     {
       label: 'Total outflows',
       owner: totals.total_ownership_outflows,
@@ -83,6 +93,7 @@ export function CostTable({ result }: CostTableProps) {
     if (variant === 'subtotal') return 'py-2 px-3 text-sm font-semibold text-right tabular-nums'
     if (variant === 'networth') return 'py-2 px-3 text-base font-bold text-right tabular-nums'
     if (variant === 'gainloss') return 'py-2 px-3 text-sm font-semibold text-right tabular-nums'
+    if (variant === 'taxbenefit') return 'py-2 px-3 text-sm text-right tabular-nums text-green-700'
     return 'py-2 px-3 text-sm text-right tabular-nums'
   }
 
@@ -90,6 +101,7 @@ export function CostTable({ result }: CostTableProps) {
     if (variant === 'subtotal') return 'py-2 px-3 text-sm font-semibold text-gray-700'
     if (variant === 'networth') return 'py-2 px-3 text-base font-bold text-gray-900'
     if (variant === 'gainloss') return 'py-2 px-3 text-sm font-semibold text-gray-700'
+    if (variant === 'taxbenefit') return 'py-2 px-3 text-sm text-green-700'
     return 'py-2 px-3 text-sm text-gray-600'
   }
 

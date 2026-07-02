@@ -1,4 +1,5 @@
 import type { ScenarioResult } from '../engine'
+import { FEDERAL_TAX_AS_OF_DATE } from '../engine'
 import { formatCurrency } from '../lib/format'
 
 type HeadlineResultProps = {
@@ -31,6 +32,11 @@ export function HeadlineResult({ result }: HeadlineResultProps) {
           </>
         )}
       </p>
+      {result.inputs.tax.taxes_enabled && (
+        <p className="mt-2 text-xs text-gray-500">
+          Federal tax estimates use {FEDERAL_TAX_AS_OF_DATE} IRS tables.
+        </p>
+      )}
     </div>
   )
 }

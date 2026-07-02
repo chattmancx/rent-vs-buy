@@ -70,4 +70,54 @@ describe('exportToCsv', () => {
     const sanitized = /^[=+\-@\t\r]/.test(str) ? `'${str}` : str
     expect(sanitized).toBe('123456')
   })
+
+  it('CSV-1: includes the Federal Tax Benefit ($) column header', () => {
+    const result = computeScenario(DEFAULT_INPUT)
+    const csv = exportToCsv(result)
+    expect(csv).toContain('Federal Tax Benefit ($)')
+  })
+
+  it('CSV-2: value is 0 when total_tax_benefit is 0', () => {
+    const result = computeScenario(DEFAULT_INPUT)
+    expect(result.totals.total_tax_benefit).toBe(0)
+    const csv = exportToCsv(result)
+    expect(csv).toContain('Federal Tax Benefit ($),0')
+  })
+
+  it('CSV-3: value is the positive number when total_tax_benefit > 0', () => {
+    const result = computeScenario({
+      ...DEFAULT_INPUT,
+      tax: {
+        taxes_enabled: true,
+        itemizes: true,
+        filing_status: 'single',
+        gross_annual_income: 150000,
+        state_income_tax_annual: 5000,
+        state: 'Maryland',
+      },
+    })
+    expect(result.totals.total_tax_benefit).toBeGreaterThan(0)
+    const csv = exportToCsv(result)
+    const expected = Math.round(result.totals.total_tax_benefit)
+    expect(csv).toContain(`Federal Tax Benefit ($),${expected}`)
+  })
+
+  it('CSV-4: column is present regardless of taxes_enabled', () => {
+    const enabled = computeScenario({
+      ...DEFAULT_INPUT,
+      tax: { ...DEFAULT_INPUT.tax, taxes_enabled: false },
+    })
+    const csv = exportToCsv(enabled)
+    expect(csv).toContain('Federal Tax Benefit ($)')
+  })
+
+  it('CSV-5: all pre-existing columns are present and unchanged', () => {
+    const result = computeScenario(DEFAULT_INPUT)
+    const csv = exportToCsv(result)
+    expect(csv).toContain('Total Ownership Outflows')
+    expect(csv).toContain('Total Rentership Outflows')
+    expect(csv).toContain('Sale Proceeds')
+    expect(csv).toContain('Owner Final Net Worth')
+    expect(csv).toContain('Renter Final Net Worth')
+  })
 })

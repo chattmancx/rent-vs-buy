@@ -6,6 +6,30 @@ import { DEFAULT_INPUT } from '../../lib/defaults'
 
 const result = computeScenario(DEFAULT_INPUT)
 
+const taxResult = computeScenario({
+  ...DEFAULT_INPUT,
+  tax: {
+    taxes_enabled: true,
+    itemizes: true,
+    filing_status: 'single',
+    gross_annual_income: 150000,
+    state_income_tax_annual: 5000,
+    state: 'Maryland',
+  },
+})
+
+const taxDisabledZeroBenefitResult = computeScenario({
+  ...DEFAULT_INPUT,
+  tax: {
+    taxes_enabled: true,
+    itemizes: false,
+    filing_status: 'single',
+    gross_annual_income: 150000,
+    state_income_tax_annual: 5000,
+    state: 'Maryland',
+  },
+})
+
 describe('CostTable', () => {
   it('renders Buying and Renting column headers', () => {
     render(<CostTable result={result} />)
@@ -40,5 +64,69 @@ describe('CostTable', () => {
     render(<CostTable result={result} />)
     const headers = document.querySelectorAll('th[scope="col"]')
     expect(headers.length).toBe(3)
+  })
+
+  it('CT-1: does not render Federal tax benefit row when taxes_enabled is false', () => {
+    render(<CostTable result={result} />)
+    expect(screen.queryByText('Federal tax benefit')).toBeNull()
+  })
+
+  it('CT-2: does not render Federal tax benefit row when total_tax_benefit is 0', () => {
+    expect(taxDisabledZeroBenefitResult.totals.total_tax_benefit).toBe(0)
+    render(<CostTable result={taxDisabledZeroBenefitResult} />)
+    expect(screen.queryByText('Federal tax benefit')).toBeNull()
+  })
+
+  it('CT-3: renders Federal tax benefit row when taxes_enabled and total_tax_benefit > 0', () => {
+    expect(taxResult.totals.total_tax_benefit).toBeGreaterThan(0)
+    render(<CostTable result={taxResult} />)
+    expect(screen.getByText('Federal tax benefit')).toBeTruthy()
+  })
+
+  it('CT-4: row label reads "Federal tax benefit"', () => {
+    render(<CostTable result={taxResult} />)
+    expect(screen.getByText('Federal tax benefit')).toBeTruthy()
+  })
+
+  it('CT-5: row displays value as a negative cost', () => {
+    render(<CostTable result={taxResult} />)
+    const label = screen.getByText('Federal tax benefit')
+    const row = label.closest('tr')
+    expect(row?.textContent).toMatch(/-\$[\d,]+/)
+  })
+
+  it('CT-6: row uses a green color class', () => {
+    render(<CostTable result={taxResult} />)
+    const label = screen.getByText('Federal tax benefit')
+    expect(label.className).toMatch(/text-green-700/)
+  })
+
+  it('CT-7: row does not render an asterisk or footnote marker', () => {
+    render(<CostTable result={taxResult} />)
+    const label = screen.getByText('Federal tax benefit')
+    const row = label.closest('tr')
+    expect(row?.textContent).not.toMatch(/[*†]/)
+  })
+
+  it('CT-8: other rows are unaffected', () => {
+    render(<CostTable result={taxResult} />)
+    expect(screen.getByText('Final net worth')).toBeTruthy()
+  })
+
+  it('CT-9: value is formatted as currency matching the rest of the table', () => {
+    render(<CostTable result={taxResult} />)
+    const label = screen.getByText('Federal tax benefit')
+    const row = label.closest('tr')
+    expect(row?.textContent).toMatch(/-\$[\d,]+/)
+  })
+
+  it('CT-10: row is positioned before the ownership total row', () => {
+    render(<CostTable result={taxResult} />)
+    const rows = Array.from(document.querySelectorAll('tbody tr'))
+    const taxBenefitIdx = rows.findIndex((r) => r.textContent?.includes('Federal tax benefit'))
+    const totalOutflowsIdx = rows.findIndex((r) => r.textContent?.includes('Total outflows'))
+    expect(taxBenefitIdx).toBeGreaterThan(-1)
+    expect(totalOutflowsIdx).toBeGreaterThan(-1)
+    expect(taxBenefitIdx).toBeLessThan(totalOutflowsIdx)
   })
 })
