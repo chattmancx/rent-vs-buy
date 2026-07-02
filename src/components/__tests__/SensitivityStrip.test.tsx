@@ -34,12 +34,12 @@ describe('SensitivityStrip', () => {
     expect(dollarValues.length).toBeGreaterThan(0)
   })
 
-  it('applies green or red color classes to non-zero deltas', () => {
+  it('applies signal-buy or signal-rent color classes to non-zero deltas', () => {
     const result = computeScenario(DEFAULT_INPUT)
     render(<SensitivityStrip input={DEFAULT_INPUT} result={result} />)
-    const greenCount = document.querySelectorAll('.text-green-600').length
-    const redCount = document.querySelectorAll('.text-red-600').length
-    expect(greenCount + redCount).toBeGreaterThan(0)
+    const buyCount = document.querySelectorAll('.text-signal-buy').length
+    const rentCount = document.querySelectorAll('.text-signal-rent').length
+    expect(buyCount + rentCount).toBeGreaterThan(0)
   })
 
   it('updates delta values when result changes', () => {

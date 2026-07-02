@@ -48,10 +48,10 @@ describe('CostTable', () => {
     expect(cells.length).toBeGreaterThan(0)
   })
 
-  it('highlights the winning side net worth with green color', () => {
+  it('highlights the winning side net worth with a signal color', () => {
     render(<CostTable result={result} />)
-    const greenCells = document.querySelectorAll('.text-green-700')
-    expect(greenCells.length).toBeGreaterThan(0)
+    const highlighted = document.querySelectorAll('.text-signal-buy, .text-signal-rent')
+    expect(highlighted.length).toBeGreaterThan(0)
   })
 
   it('shows em dash for cells with no value on that side', () => {
@@ -95,10 +95,10 @@ describe('CostTable', () => {
     expect(row?.textContent).toMatch(/-\$[\d,]+/)
   })
 
-  it('CT-6: row uses a green color class', () => {
+  it('CT-6: row uses the signal-benefit color class', () => {
     render(<CostTable result={taxResult} />)
     const label = screen.getByText('Federal tax benefit')
-    expect(label.className).toMatch(/text-green-700/)
+    expect(label.className).toMatch(/text-signal-benefit/)
   })
 
   it('CT-7: row does not render an asterisk or footnote marker', () => {

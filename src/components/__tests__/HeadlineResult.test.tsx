@@ -64,6 +64,6 @@ describe('HeadlineResult', () => {
     render(<HeadlineResult result={taxEnabledResult} />)
     const note = screen.getByText(/IRS tables/)
     expect(note.className).toMatch(/text-xs/)
-    expect(note.className).toMatch(/text-gray-500/)
+    expect(note.className).toMatch(/text-ink-muted/)
   })
 })

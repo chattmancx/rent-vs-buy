@@ -6,34 +6,37 @@ type HeadlineResultProps = {
   result: ScenarioResult
 }
 
-const wrapperClass: Record<string, string> = {
-  buying: 'border-green-300 bg-green-50',
-  renting: 'border-blue-300 bg-blue-50',
-  tie: 'border-gray-300 bg-gray-50',
+const figureColorClass: Record<string, string> = {
+  buying: 'text-signal-buy',
+  renting: 'text-signal-rent',
+  tie: 'text-ink-primary',
 }
 
 export function HeadlineResult({ result }: HeadlineResultProps) {
   const { winner, margin_usd } = result.verdict
   const years = result.inputs.shared.horizon_years
-  const colors = wrapperClass[winner] ?? wrapperClass['tie']
+  const figureColor = figureColorClass[winner] ?? figureColorClass['tie']
 
   return (
-    <div className={`rounded-lg border p-6 text-center ${colors}`}>
-      <p className="text-xl font-semibold text-gray-900">
-        {winner === 'tie' ? (
-          <>
-            Over <strong>{years}</strong> years, buying and renting come out essentially even
-          </>
-        ) : (
-          <>
+    <div className="rounded-lg border-l-4 border-accent bg-surface-panel p-6">
+      <p className="text-xs font-semibold uppercase tracking-widest text-ink-muted">Verdict</p>
+      {winner === 'tie' ? (
+        <p className="mt-1 text-3xl font-semibold leading-tight text-ink-primary">
+          Over <strong>{years}</strong> years, buying and renting come out essentially even
+        </p>
+      ) : (
+        <>
+          <p className="mt-1 text-3xl font-semibold leading-tight text-ink-primary">
             Over <strong>{years}</strong> years,{' '}
-            <strong>{winner === 'buying' ? 'buying' : 'renting'}</strong> wins by{' '}
-            <strong>{formatCurrency(margin_usd)}</strong>
-          </>
-        )}
-      </p>
+            <strong>{winner === 'buying' ? 'buying' : 'renting'}</strong> wins by
+          </p>
+          <p className={`font-mono text-3xl font-semibold ${figureColor}`}>
+            {formatCurrency(margin_usd)}
+          </p>
+        </>
+      )}
       {result.inputs.tax.taxes_enabled && (
-        <p className="mt-2 text-xs text-gray-500">
+        <p className="mt-4 border-t border-surface-rule pt-4 text-xs text-ink-muted">
           Federal tax estimates use {FEDERAL_TAX_AS_OF_DATE} IRS tables.
         </p>
       )}

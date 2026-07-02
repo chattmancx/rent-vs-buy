@@ -83,26 +83,30 @@ export function CostTable({ result }: CostTableProps) {
   ]
 
   function rowClass(variant: RowDef['variant']) {
-    if (variant === 'subtotal') return 'border-t-2 border-gray-300 bg-gray-50'
-    if (variant === 'networth') return 'border-t-2 border-gray-400'
-    if (variant === 'gainloss') return 'border-t border-gray-200 bg-gray-50'
-    return 'border-t border-gray-100'
+    if (variant === 'subtotal') return 'border-t-2 border-surface-rule bg-surface-base'
+    if (variant === 'networth') return 'border-t-2 border-ink-primary'
+    if (variant === 'gainloss') return 'border-t border-surface-rule bg-surface-base'
+    return 'border-t border-surface-rule'
   }
 
   function cellClass(variant: RowDef['variant']) {
-    if (variant === 'subtotal') return 'py-2 px-3 text-sm font-semibold text-right tabular-nums'
-    if (variant === 'networth') return 'py-2 px-3 text-base font-bold text-right tabular-nums'
-    if (variant === 'gainloss') return 'py-2 px-3 text-sm font-semibold text-right tabular-nums'
-    if (variant === 'taxbenefit') return 'py-2 px-3 text-sm text-right tabular-nums text-green-700'
-    return 'py-2 px-3 text-sm text-right tabular-nums'
+    if (variant === 'subtotal')
+      return 'py-2 px-3 text-sm font-medium text-right font-mono tabular-nums text-ink-primary'
+    if (variant === 'networth')
+      return 'py-3 px-3 text-sm font-semibold text-right font-mono tabular-nums text-ink-primary'
+    if (variant === 'gainloss')
+      return 'py-2 px-3 text-sm font-semibold text-right font-mono tabular-nums'
+    if (variant === 'taxbenefit')
+      return 'py-2 px-3 text-sm text-right font-mono tabular-nums text-signal-benefit'
+    return 'py-2 px-3 text-sm text-right font-mono tabular-nums text-ink-primary'
   }
 
   function labelClass(variant: RowDef['variant']) {
-    if (variant === 'subtotal') return 'py-2 px-3 text-sm font-semibold text-gray-700'
-    if (variant === 'networth') return 'py-2 px-3 text-base font-bold text-gray-900'
-    if (variant === 'gainloss') return 'py-2 px-3 text-sm font-semibold text-gray-700'
-    if (variant === 'taxbenefit') return 'py-2 px-3 text-sm text-green-700'
-    return 'py-2 px-3 text-sm text-gray-600'
+    if (variant === 'subtotal') return 'py-2 px-3 text-sm font-medium text-ink-primary'
+    if (variant === 'networth') return 'py-3 px-3 text-sm font-semibold text-ink-primary'
+    if (variant === 'gainloss') return 'py-2 px-3 text-sm font-semibold text-ink-primary'
+    if (variant === 'taxbenefit') return 'py-2 px-3 text-sm text-signal-benefit'
+    return 'py-2 px-3 text-sm text-ink-secondary'
   }
 
   function winnerColor(side: 'owner' | 'renter', variant: RowDef['variant']) {
@@ -111,12 +115,13 @@ export function CostTable({ result }: CostTableProps) {
     const sideWins =
       (side === 'owner' && verdict.winner === 'buying') ||
       (side === 'renter' && verdict.winner === 'renting')
-    return sideWins ? 'text-green-700' : ''
+    if (!sideWins) return ''
+    return side === 'owner' ? 'text-signal-buy' : 'text-signal-rent'
   }
 
   function gainLossColor(value: number | null) {
     if (value === null) return ''
-    return value >= 0 ? 'text-green-700' : 'text-red-700'
+    return value >= 0 ? 'text-signal-benefit' : 'text-signal-negative'
   }
 
   function formatGainLoss(value: number | null): string {
@@ -125,20 +130,29 @@ export function CostTable({ result }: CostTableProps) {
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-gray-200">
+    <div className="overflow-x-auto rounded-lg border border-surface-rule bg-surface-panel p-6">
       <table className="w-full border-collapse">
         <caption className="sr-only">
           Cost breakdown comparing buying and renting over {inputs.shared.horizon_years} years
         </caption>
         <thead>
-          <tr className="bg-gray-100">
-            <th scope="col" className="py-2 px-3 text-left text-sm font-semibold text-gray-700">
+          <tr>
+            <th
+              scope="col"
+              className="border-b border-surface-rule pb-2 text-left text-xs font-semibold uppercase tracking-widest text-ink-muted"
+            >
               Category
             </th>
-            <th scope="col" className="py-2 px-3 text-right text-sm font-semibold text-gray-700">
+            <th
+              scope="col"
+              className="border-b border-surface-rule pb-2 text-right text-xs font-semibold uppercase tracking-widest text-ink-muted"
+            >
               Buying
             </th>
-            <th scope="col" className="py-2 px-3 text-right text-sm font-semibold text-gray-700">
+            <th
+              scope="col"
+              className="border-b border-surface-rule pb-2 text-right text-xs font-semibold uppercase tracking-widest text-ink-muted"
+            >
               Renting
             </th>
           </tr>

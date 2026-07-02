@@ -13,10 +13,10 @@ function clamp(value: number, min: number, max: number): number {
 }
 
 function deltaColorClass(delta: number | null): string {
-  if (delta === null) return 'text-gray-400'
-  if (delta > 0) return 'text-green-600'
-  if (delta < 0) return 'text-red-600'
-  return 'text-gray-600'
+  if (delta === null) return 'text-ink-muted'
+  if (delta > 0) return 'text-signal-buy'
+  if (delta < 0) return 'text-signal-rent'
+  return 'text-ink-muted'
 }
 
 function formatSensitivityDelta(delta: number | null): string {
@@ -112,16 +112,24 @@ export function SensitivityStrip({ input, result }: SensitivityStripProps) {
 
   return (
     <section aria-labelledby="sensitivity-heading">
-      <h2 id="sensitivity-heading" className="mb-2 text-sm font-semibold text-gray-700">
+      <h2
+        id="sensitivity-heading"
+        className="mb-2 text-xs font-semibold uppercase tracking-widest text-ink-muted"
+      >
         Sensitivity: ±1pp Change
       </h2>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {sensitivities.map((card) => (
-          <div key={card.label} className="rounded-lg border border-gray-200 bg-white p-3">
-            <p className="mb-2 text-xs font-semibold text-gray-700">{card.label}</p>
+          <div
+            key={card.label}
+            className="rounded-lg border border-surface-rule bg-surface-panel p-3"
+          >
+            <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-ink-muted">
+              {card.label}
+            </p>
             <div className="space-y-1">
               <div className="flex items-center justify-between">
-                <span className="text-xs text-gray-500">+1pp</span>
+                <span className="text-xs text-ink-muted">+1pp</span>
                 <span className={`font-mono text-xs ${deltaColorClass(card.plus)}`}>
                   {formatSensitivityDelta(card.plus)}
                   {card.plus !== null && card.plus !== 0 && (
@@ -132,7 +140,7 @@ export function SensitivityStrip({ input, result }: SensitivityStripProps) {
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs text-gray-500">-1pp</span>
+                <span className="text-xs text-ink-muted">-1pp</span>
                 <span className={`font-mono text-xs ${deltaColorClass(card.minus)}`}>
                   {formatSensitivityDelta(card.minus)}
                   {card.minus !== null && card.minus !== 0 && (

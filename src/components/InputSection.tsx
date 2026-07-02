@@ -20,10 +20,10 @@ export function InputSection({ title, children, defaultOpen }: InputSectionProps
         }
       }}
     >
-      <summary className="cursor-pointer select-none py-2 text-sm font-semibold text-gray-800">
+      <summary className="mb-4 block w-full cursor-pointer select-none border-b border-surface-rule pb-2 text-xs font-semibold uppercase tracking-widest text-ink-muted">
         {title}
       </summary>
-      <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">{children}</div>
+      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">{children}</div>
     </details>
   )
 }

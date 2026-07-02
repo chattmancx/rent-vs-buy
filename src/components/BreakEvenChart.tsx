@@ -38,37 +38,52 @@ export function BreakEvenChart({ result, updateShared }: BreakEvenChartProps) {
   }
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4">
-      <h2 className="mb-3 text-sm font-semibold text-gray-700">Net Worth Over Time</h2>
+    <div className="rounded-lg border border-surface-rule bg-surface-panel p-6">
+      <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-ink-muted">
+        Net Worth Over Time
+      </h2>
       <div
         role="img"
         aria-label={`Net worth over time chart over ${result.inputs.shared.horizon_years} years.${crossoverYear !== null ? ` Buying and renting lines cross at year ${crossoverYear}.` : ' No break-even within the analysis period.'}`}
       >
         <ResponsiveContainer width="100%" height={320}>
           <LineChart data={chartData} margin={{ top: 8, right: 16, bottom: 8, left: 16 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis dataKey="year" label={{ value: 'Year', position: 'insideBottom', offset: -4 }} />
-            <YAxis tickFormatter={formatCurrencyCompact} width={72} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#E2DDD6" />
+            <XAxis
+              dataKey="year"
+              label={{ value: 'Year', position: 'insideBottom', offset: -4 }}
+              tick={{ fill: '#8C8884', fontSize: 12 }}
+            />
+            <YAxis
+              tickFormatter={formatCurrencyCompact}
+              width={72}
+              tick={{ fill: '#8C8884', fontSize: 12 }}
+            />
             <ChartTooltip
               formatter={(value: number, name: string) => [
                 formatCurrency(value),
                 name === 'owner' ? 'Buying' : 'Renting',
               ]}
               labelFormatter={(label: number) => `Year ${label}`}
+              contentStyle={{
+                backgroundColor: '#FFFFFF',
+                border: '1px solid #E2DDD6',
+                color: '#1A1A18',
+              }}
             />
             <Legend formatter={(value: string) => (value === 'owner' ? 'Buying' : 'Renting')} />
             {crossoverYear !== null && (
               <ReferenceLine
                 x={crossoverYear}
-                stroke="#6b7280"
+                stroke="#4A7C59"
                 strokeDasharray="4 4"
-                label={{ value: 'Break-even', position: 'top', fontSize: 11, fill: '#6b7280' }}
+                label={{ value: 'Break-even', position: 'top', fontSize: 11, fill: '#4A7C59' }}
               />
             )}
             <Line
               type="monotone"
               dataKey="owner"
-              stroke="#16a34a"
+              stroke="#3B6EA5"
               strokeWidth={2}
               dot={false}
               name="owner"
@@ -76,7 +91,7 @@ export function BreakEvenChart({ result, updateShared }: BreakEvenChartProps) {
             <Line
               type="monotone"
               dataKey="renter"
-              stroke="#2563eb"
+              stroke="#7A6E5F"
               strokeWidth={2}
               dot={false}
               name="renter"
@@ -85,9 +100,9 @@ export function BreakEvenChart({ result, updateShared }: BreakEvenChartProps) {
         </ResponsiveContainer>
       </div>
       <div className="mt-3 px-4">
-        <div className="mb-1 flex items-center justify-between text-xs text-gray-500">
+        <div className="mb-1 flex items-center justify-between text-xs text-ink-muted">
           <span>1 yr</span>
-          <span className="font-medium text-gray-700">
+          <span className="font-medium text-ink-secondary">
             Horizon: {result.inputs.shared.horizon_years} years
           </span>
           <span>30 yrs</span>
@@ -99,7 +114,7 @@ export function BreakEvenChart({ result, updateShared }: BreakEvenChartProps) {
           step={1}
           value={result.inputs.shared.horizon_years}
           onChange={(e) => updateShared({ horizon_years: parseInt(e.target.value, 10) })}
-          className="w-full accent-blue-600"
+          className="w-full accent-accent"
           aria-label="Chart horizon in years"
         />
       </div>
