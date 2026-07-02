@@ -46,5 +46,6 @@ export const DEFAULT_INPUT: ScenarioInput = {
     state_income_tax_annual: 0,
     state: '',
     itemizes: false,
+    include_capital_gains: true,
   },
 }

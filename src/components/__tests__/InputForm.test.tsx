@@ -54,4 +54,34 @@ describe('App input form', () => {
       expect(slider.getAttribute('aria-label')).not.toBeNull()
     })
   })
+
+  it('CG-17: "Capital Gains (Expert)" section renders with include_capital_gains checked by default', () => {
+    render(<App />)
+    const checkbox = screen.getByLabelText('Include capital gains tax on sale') as HTMLInputElement
+    expect(checkbox.checked).toBe(true)
+  })
+
+  it('CG-18: unchecking the toggle removes the Capital gains tax row even with a taxable gain', () => {
+    render(<App />)
+    // Enable taxes
+    fireEvent.click(screen.getByLabelText('Enable federal tax effects'))
+    // Extend horizon so the sale-year gain exceeds the $250K single exclusion
+    const horizonSlider = screen.getByLabelText('Analysis horizon in years') as HTMLInputElement
+    fireEvent.change(horizonSlider, { target: { value: '20' } })
+    // Income high enough to land in a nonzero LTCG bracket
+    const incomeInput = screen.getByLabelText('Gross annual income') as HTMLInputElement
+    fireEvent.change(incomeInput, { target: { value: '150000' } })
+
+    expect(screen.getByText('Capital gains tax')).toBeTruthy()
+
+    fireEvent.click(screen.getByLabelText('Include capital gains tax on sale'))
+    expect(screen.queryByText('Capital gains tax')).toBeNull()
+  })
+
+  it('CG-19: the Capital Gains section control is disabled when taxes_enabled is false', () => {
+    render(<App />)
+    const checkbox = screen.getByLabelText('Include capital gains tax on sale') as HTMLInputElement
+    expect(checkbox.disabled).toBe(true)
+    expect(checkbox.closest('.opacity-50')).not.toBeNull()
+  })
 })

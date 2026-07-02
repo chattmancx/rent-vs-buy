@@ -55,6 +55,7 @@ const TaxSchema = z.object({
   state_income_tax_annual: z.number().finite().min(0),
   state: z.string().default(''),
   itemizes: z.boolean().default(false),
+  include_capital_gains: z.boolean().default(true),
 })
 
 const DEFAULT_TAX = {
@@ -64,6 +65,7 @@ const DEFAULT_TAX = {
   state_income_tax_annual: 0,
   state: '',
   itemizes: false,
+  include_capital_gains: true,
 }
 
 export const ScenarioInputSchema = z.object({

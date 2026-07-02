@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
   computeAnnualTaxBenefit,
   computeAnnualTaxBenefitBreakdown,
+  computeCapitalGainsTax,
   getMarginalRate,
   SALT_CAP_2026,
   SALT_CAP_MFS_2026,
@@ -15,6 +16,7 @@ const BASE_TAX: TaxInput = {
   state_income_tax_annual: 0,
   state: '',
   itemizes: true,
+  include_capital_gains: true,
 }
 
 // ---------------------------------------------------------------------------
@@ -323,5 +325,112 @@ describe('computeAnnualTaxBenefit — edge cases', () => {
     })
     // total SALT = min($10K, $40K) = $10K; total itemized = $10K < $32,200 std → 0
     expect(result).toBe(0)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Group 8 — Capital gains tax (Stage 12)
+// ---------------------------------------------------------------------------
+describe('computeCapitalGainsTax', () => {
+  it('CG-1: returns all-zero when taxes_enabled is false', () => {
+    const result = computeCapitalGainsTax({
+      taxInput: { ...BASE_TAX, taxes_enabled: false },
+      gain: 300_000,
+      horizonYears: 10,
+    })
+    expect(result).toEqual({ gain: 0, excluded_gain: 0, taxable_gain: 0, tax: 0 })
+  })
+
+  it('CG-2: returns all-zero when gain <= 0', () => {
+    const result = computeCapitalGainsTax({
+      taxInput: BASE_TAX,
+      gain: 0,
+      horizonYears: 10,
+    })
+    expect(result).toEqual({ gain: 0, excluded_gain: 0, taxable_gain: 0, tax: 0 })
+  })
+
+  it('CG-3: single filer, gain fully within $250K exclusion → tax 0, excluded_gain === gain', () => {
+    // gain $200K < $250K single exclusion → fully excluded
+    const result = computeCapitalGainsTax({
+      taxInput: BASE_TAX,
+      gain: 200_000,
+      horizonYears: 10,
+    })
+    expect(result.excluded_gain).toBe(200_000)
+    expect(result.taxable_gain).toBe(0)
+    expect(result.tax).toBe(0)
+  })
+
+  it('CG-4: single filer, gain exceeds $250K exclusion → taxable_gain = gain - 250K, tax > 0', () => {
+    // gain $400K - $250K exclusion = $150K taxable
+    // BASE_TAX income $100K; taxable income = $100K - $16,100 = $83,900
+    // single LTCG brackets: 0% ≤ $49,450, 15% ≤ $545,500 → $83,900 falls in 15%
+    // tax = $150,000 × 0.15 = $22,500
+    const result = computeCapitalGainsTax({
+      taxInput: BASE_TAX,
+      gain: 400_000,
+      horizonYears: 10,
+    })
+    expect(result.taxable_gain).toBe(150_000)
+    expect(result.tax).toBeCloseTo(22_500, 0)
+  })
+
+  it('CG-5: MFJ filer, exclusion is $500K not $250K', () => {
+    // gain $600K - $500K MFJ exclusion = $100K taxable
+    // income $200K; taxable income = $200K - $32,200 = $167,800
+    // MFJ LTCG brackets: 0% ≤ $98,900, 15% ≤ $613,700 → $167,800 falls in 15%
+    // tax = $100,000 × 0.15 = $15,000
+    const result = computeCapitalGainsTax({
+      taxInput: {
+        ...BASE_TAX,
+        filing_status: 'married_filing_jointly',
+        gross_annual_income: 200_000,
+      },
+      gain: 600_000,
+      horizonYears: 10,
+    })
+    expect(result.excluded_gain).toBe(500_000)
+    expect(result.taxable_gain).toBe(100_000)
+    expect(result.tax).toBeCloseTo(15_000, 0)
+  })
+
+  it('CG-6: horizon_years < 2 → exclusion does not apply even if otherwise qualified', () => {
+    // Same gain/income as CG-4, but horizon is 1 year: exclusion is fully denied
+    // taxable_gain = full $200K gain (not gain - exclusion)
+    // taxable income $83,900 → 15% bracket → tax = $200,000 × 0.15 = $30,000
+    const result = computeCapitalGainsTax({
+      taxInput: BASE_TAX,
+      gain: 200_000,
+      horizonYears: 1,
+    })
+    expect(result.excluded_gain).toBe(0)
+    expect(result.taxable_gain).toBe(200_000)
+    expect(result.tax).toBeCloseTo(30_000, 0)
+  })
+
+  it('CG-7: low income → 0% LTCG bracket, tax is 0 even with a taxable gain', () => {
+    // gain $300K - $250K exclusion = $50K taxable
+    // income $40K; taxable income = $40K - $16,100 = $23,900 ≤ $49,450 → 0% bracket
+    const result = computeCapitalGainsTax({
+      taxInput: { ...BASE_TAX, gross_annual_income: 40_000 },
+      gain: 300_000,
+      horizonYears: 10,
+    })
+    expect(result.taxable_gain).toBe(50_000)
+    expect(result.tax).toBe(0)
+  })
+
+  it('CG-8: high income → 20% LTCG bracket applied correctly', () => {
+    // gain $800K - $250K exclusion = $550K taxable
+    // income $700K; taxable income = $700K - $16,100 = $683,900 > $545,500 → 20% bracket
+    // tax = $550,000 × 0.20 = $110,000
+    const result = computeCapitalGainsTax({
+      taxInput: { ...BASE_TAX, gross_annual_income: 700_000 },
+      gain: 800_000,
+      horizonYears: 10,
+    })
+    expect(result.taxable_gain).toBe(550_000)
+    expect(result.tax).toBeCloseTo(110_000, 0)
   })
 })

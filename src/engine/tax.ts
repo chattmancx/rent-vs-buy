@@ -65,6 +65,45 @@ export const SALT_CAP_MFS_2026 = 20_000
 // Only interest on the first $750,000 of acquisition debt is deductible.
 export const MID_LOAN_LIMIT_2026 = 750_000
 
+// 2026 long-term capital gains brackets (IRS Rev. Proc. 2025-32, §4.03
+// "Maximum Capital Gains Rate" — verified directly against the source PDF,
+// not derived from a secondary summary). Each entry: [taxableIncomeCeiling
+// for that rate, rate]. 0% applies up to the first ceiling, 15% up to the
+// second, 20% above it.
+const LTCG_BRACKETS_2026: Record<FilingStatus, Bracket[]> = {
+  single: [
+    [49_450, 0.0],
+    [545_500, 0.15],
+    [Infinity, 0.2],
+  ],
+  married_filing_jointly: [
+    [98_900, 0.0],
+    [613_700, 0.15],
+    [Infinity, 0.2],
+  ],
+  married_filing_separately: [
+    [49_450, 0.0],
+    [306_850, 0.15],
+    [Infinity, 0.2],
+  ],
+  head_of_household: [
+    [66_200, 0.0],
+    [579_600, 0.15],
+    [Infinity, 0.2],
+  ],
+}
+
+// Primary-residence capital gains exclusion (IRC §121)
+const CAPITAL_GAINS_EXCLUSION_MFJ = 500_000
+const CAPITAL_GAINS_EXCLUSION_OTHER = 250_000
+
+// Simplified ownership/use test: the real IRC §121 rule requires 2 of the
+// last 5 years as a primary residence. This engine models one continuous
+// ownership period, so the exclusion is approximated as "met when the
+// analysis horizon is at least 2 years" — a material simplification, not
+// a full 2-of-5-year lookback.
+const MIN_HORIZON_YEARS_FOR_EXCLUSION = 2
+
 export function getMarginalRate(grossIncome: number, filingStatus: FilingStatus): number {
   const standardDeduction = STANDARD_DEDUCTION_2026[filingStatus]
   const taxableIncome = Math.max(0, grossIncome - standardDeduction)
@@ -73,6 +112,21 @@ export function getMarginalRate(grossIncome: number, filingStatus: FilingStatus)
     if (taxableIncome <= ceiling) return rate
   }
   return 0.37
+}
+
+// Simplified: does not stack the capital gain on top of ordinary taxable
+// income to determine bracket placement (the real rule taxes the gain at
+// the rate corresponding to ordinary income + gain, not ordinary income
+// alone). Uses the same gross-income-minus-standard-deduction taxable
+// income already used for the ordinary marginal rate lookup above.
+function getLtcgRate(grossIncome: number, filingStatus: FilingStatus): number {
+  const standardDeduction = STANDARD_DEDUCTION_2026[filingStatus]
+  const taxableIncome = Math.max(0, grossIncome - standardDeduction)
+  const brackets = LTCG_BRACKETS_2026[filingStatus]
+  for (const [ceiling, rate] of brackets) {
+    if (taxableIncome <= ceiling) return rate
+  }
+  return 0.2
 }
 
 export type TaxBenefitBreakdown = {
@@ -128,4 +182,39 @@ export function computeAnnualTaxBenefit(params: {
   loanBalance: number
 }): number {
   return computeAnnualTaxBenefitBreakdown(params).total
+}
+
+export type CapitalGainsBreakdown = {
+  gain: number
+  excluded_gain: number
+  taxable_gain: number
+  tax: number
+}
+
+export function computeCapitalGainsTax(params: {
+  taxInput: TaxInput
+  gain: number
+  horizonYears: number
+}): CapitalGainsBreakdown {
+  const { taxInput, gain, horizonYears } = params
+  const zero: CapitalGainsBreakdown = { gain: 0, excluded_gain: 0, taxable_gain: 0, tax: 0 }
+
+  if (!taxInput.taxes_enabled || !taxInput.include_capital_gains || gain <= 0) return zero
+
+  // IRC §121 primary-residence exclusion, gated by the simplified
+  // ownership/use test (see MIN_HORIZON_YEARS_FOR_EXCLUSION above).
+  const exclusion =
+    taxInput.filing_status === 'married_filing_jointly'
+      ? CAPITAL_GAINS_EXCLUSION_MFJ
+      : CAPITAL_GAINS_EXCLUSION_OTHER
+  const excludedGain =
+    horizonYears >= MIN_HORIZON_YEARS_FOR_EXCLUSION ? Math.min(gain, exclusion) : 0
+  const taxableGain = Math.max(0, gain - excludedGain)
+
+  if (taxableGain === 0) return { gain, excluded_gain: excludedGain, taxable_gain: 0, tax: 0 }
+
+  const rate = getLtcgRate(taxInput.gross_annual_income, taxInput.filing_status)
+  const tax = taxableGain * rate
+
+  return { gain, excluded_gain: excludedGain, taxable_gain: taxableGain, tax }
 }

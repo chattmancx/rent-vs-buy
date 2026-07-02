@@ -90,6 +90,7 @@ describe('exportToCsv', () => {
       tax: {
         taxes_enabled: true,
         itemizes: true,
+        include_capital_gains: true,
         filing_status: 'single',
         gross_annual_income: 150000,
         state_income_tax_annual: 5000,

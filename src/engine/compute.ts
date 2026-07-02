@@ -14,7 +14,7 @@ import {
 } from './mortgage'
 import { escalate } from './rent'
 import { computeMonthlyInvestmentRate, growBalance } from './investment'
-import { computeAnnualTaxBenefitBreakdown } from './tax'
+import { computeAnnualTaxBenefitBreakdown, computeCapitalGainsTax } from './tax'
 
 function validateInputs(input: ScenarioInput): void {
   const allValues: number[] = [
@@ -303,7 +303,18 @@ export function computeScenario(input: ScenarioInput): ScenarioResult {
   const sellingCostsFinal = saleHomeValue * (o.selling_cost_pct / 100)
   const saleProceeds = saleHomeValue - saleRemainingLoan - sellingCostsFinal
 
-  const ownerFinalNetWorth = saleProceeds + lastMonth.owner_investment_balance
+  // Capital gains tax (IRC §121 primary-residence exclusion) reduces the
+  // owner's realized proceeds but not the reported sale_proceeds total,
+  // which stays pre-tax (see ScenarioTotals.sale_proceeds).
+  const gain = saleHomeValue - sellingCostsFinal - o.purchase_price
+  const capitalGainsBreakdown = computeCapitalGainsTax({
+    taxInput: input.tax,
+    gain,
+    horizonYears: s.horizon_years,
+  })
+  const saleProceedsAfterTax = saleProceeds - capitalGainsBreakdown.tax
+
+  const ownerFinalNetWorth = saleProceedsAfterTax + lastMonth.owner_investment_balance
   const renterFinalNetWorth = lastMonth.renter_investment_balance
 
   const totalOwnershipOutflows =
@@ -336,6 +347,7 @@ export function computeScenario(input: ScenarioInput): ScenarioResult {
     total_mortgage_interest_deduction: totalMidBenefit,
     total_salt_benefit: totalSaltBenefit,
     total_tax_benefit: totalTaxBenefit,
+    total_capital_gains_tax: capitalGainsBreakdown.tax,
     total_rent_paid: totalRent,
     total_pet_rent: totalPetRent,
     total_parking_fees: totalParking,

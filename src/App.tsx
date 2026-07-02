@@ -73,6 +73,25 @@ export default function App() {
                 <TaxInputs input={input} updateTax={updateTax} />
               </div>
             </InputSection>
+            <InputSection title="Capital Gains (Expert)">
+              <div className="col-span-full space-y-2 border-l-2 border-surface-rule pl-4">
+                <div className={input.tax.taxes_enabled ? '' : 'pointer-events-none opacity-50'}>
+                  <label className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={input.tax.include_capital_gains}
+                      onChange={(e) => updateTax({ include_capital_gains: e.target.checked })}
+                      disabled={!input.tax.taxes_enabled}
+                      aria-label="Include capital gains tax on sale"
+                      className="h-4 w-4 accent-accent"
+                    />
+                    <span className="font-medium text-ink-secondary">
+                      Include capital gains tax on sale
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </InputSection>
           </div>
           <div className="space-y-4 md:col-span-3">
             <HeadlineResult result={result} />

@@ -67,6 +67,7 @@ const SCENARIO_A: ScenarioInput = {
     state_income_tax_annual: 0,
     state: '',
     itemizes: false,
+    include_capital_gains: true,
   },
 }
 
@@ -101,6 +102,7 @@ const SCENARIO_B: ScenarioInput = {
     state_income_tax_annual: 0,
     state: '',
     itemizes: false,
+    include_capital_gains: true,
   },
 }
 
@@ -137,6 +139,7 @@ const SCENARIO_C: ScenarioInput = {
     state_income_tax_annual: 0,
     state: '',
     itemizes: false,
+    include_capital_gains: true,
   },
 }
 
@@ -215,6 +218,7 @@ const SCENARIO_SIMPLE: ScenarioInput = {
     state_income_tax_annual: 0,
     state: '',
     itemizes: false,
+    include_capital_gains: true,
   },
 }
 
@@ -361,7 +365,89 @@ describe('computeScenario — tax backward compatibility (taxes_enabled: false)'
       const result = computeScenario(scenario)
       expect(result.totals.total_salt_benefit).toBe(0)
     })
+
+    it(`${name}: total_capital_gains_tax is exactly 0`, () => {
+      const result = computeScenario(scenario)
+      expect(result.totals.total_capital_gains_tax).toBe(0)
+    })
   }
+})
+
+// ---------------------------------------------------------------------------
+// Capital gains tax (Stage 12) — dedicated scenario, since A/B/C/Simple all
+// have gross_annual_income: 0 and can't exercise a nonzero LTCG rate.
+// $800K purchase, 6% appreciation, 15yr horizon produces a sale-year gain
+// well above the $250K single exclusion.
+// ---------------------------------------------------------------------------
+const SCENARIO_CAPITAL_GAINS: ScenarioInput = {
+  ownership: {
+    ...BASE_OWNERSHIP,
+    purchase_price: 800000,
+    down_payment_pct: 20,
+    interest_rate: 6.5,
+    loan_term_years: 30,
+    real_estate_tax_rate: 1.2,
+    home_appreciation_rate: 0.06,
+  },
+  rental: {
+    ...BASE_RENTAL,
+    base_rent_monthly: 3000,
+  },
+  shared: {
+    ...BASE_SHARED,
+    horizon_years: 15,
+    investment_return_rate: 0.07,
+    invest_vs_spend_ratio: 0.5,
+  },
+  tax: {
+    taxes_enabled: true,
+    filing_status: 'single',
+    gross_annual_income: 250000,
+    state_income_tax_annual: 0,
+    state: '',
+    itemizes: false,
+    include_capital_gains: true,
+  },
+}
+
+describe('computeScenario — capital gains tax', () => {
+  it('CG-9: long horizon, high appreciation: total_capital_gains_tax > 0, net worth reflects after-tax proceeds', () => {
+    const withGainsTax = computeScenario(SCENARIO_CAPITAL_GAINS)
+    expect(withGainsTax.totals.total_capital_gains_tax).toBeGreaterThan(0)
+
+    // Isolate the capital-gains effect: same scenario, only the sub-toggle
+    // flipped (taxes_enabled stays true, so MID/SALT benefit is identical
+    // in both — the only difference should be total_capital_gains_tax).
+    const withoutGainsTax = computeScenario({
+      ...SCENARIO_CAPITAL_GAINS,
+      tax: { ...SCENARIO_CAPITAL_GAINS.tax, include_capital_gains: false },
+    })
+    expect(withoutGainsTax.totals.total_capital_gains_tax).toBe(0)
+    const netWorthDelta =
+      withoutGainsTax.totals.owner_final_net_worth - withGainsTax.totals.owner_final_net_worth
+    expect(netWorthDelta).toBeCloseTo(withGainsTax.totals.total_capital_gains_tax, 0)
+  })
+
+  it('CG-10: taxes_enabled false: total_capital_gains_tax is exactly 0', () => {
+    const result = computeScenario({
+      ...SCENARIO_CAPITAL_GAINS,
+      tax: { ...SCENARIO_CAPITAL_GAINS.tax, taxes_enabled: false },
+    })
+    expect(result.totals.total_capital_gains_tax).toBe(0)
+  })
+
+  it('CG-11: short horizon (1 year): exclusion does not apply, gain is fully taxed', () => {
+    const shortHorizon: ScenarioInput = {
+      ...SCENARIO_CAPITAL_GAINS,
+      ownership: { ...SCENARIO_CAPITAL_GAINS.ownership, home_appreciation_rate: 0.15 },
+      shared: { ...SCENARIO_CAPITAL_GAINS.shared, horizon_years: 1 },
+    }
+    const result = computeScenario(shortHorizon)
+    // Gain is modest (~$51K, well under the $250K exclusion) but the
+    // 1-year horizon fails the simplified ownership/use test, so the
+    // exclusion does not apply and the full gain is taxed.
+    expect(result.totals.total_capital_gains_tax).toBeGreaterThan(0)
+  })
 })
 
 describe('computeScenario — input validation', () => {

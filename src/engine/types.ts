@@ -52,6 +52,7 @@ export type TaxInput = {
   state_income_tax_annual: number // USD; used for SALT cap calculation only
   state: string // canonical state name e.g. 'Maryland'; '' = not selected
   itemizes: boolean // if false, forces tax benefit to zero regardless of math
+  include_capital_gains: boolean // if false, forces capital gains tax to zero regardless of the math, independent of taxes_enabled
 }
 
 export type ScenarioInput = {
@@ -121,6 +122,7 @@ export type ScenarioTotals = {
   total_mortgage_interest_deduction: number // USD; total MID claimed over horizon
   total_salt_benefit: number // USD; total property tax benefit claimed (post-cap)
   total_tax_benefit: number // USD; sum of all federal tax benefits over horizon
+  total_capital_gains_tax: number // USD; federal LTCG tax on sale-year gain, after §121 exclusion
   // Rental totals
   total_rent_paid: number
   total_pet_rent: number

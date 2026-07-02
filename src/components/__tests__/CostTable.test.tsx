@@ -15,6 +15,7 @@ const taxResult = computeScenario({
     gross_annual_income: 150000,
     state_income_tax_annual: 5000,
     state: 'Maryland',
+    include_capital_gains: true,
   },
 })
 
@@ -27,6 +28,25 @@ const taxDisabledZeroBenefitResult = computeScenario({
     gross_annual_income: 150000,
     state_income_tax_annual: 5000,
     state: 'Maryland',
+    include_capital_gains: true,
+  },
+})
+
+// Longer horizon than `taxResult` so the sale-year gain (~$565K) clears the
+// $250K single exclusion and leaves a nonzero taxable gain — `taxResult`'s
+// 10-year gain (~$203K) stays fully excluded, so it can't exercise the
+// capital-gains-tax row.
+const capitalGainsResult = computeScenario({
+  ...DEFAULT_INPUT,
+  shared: { ...DEFAULT_INPUT.shared, horizon_years: 20 },
+  tax: {
+    taxes_enabled: true,
+    itemizes: true,
+    filing_status: 'single',
+    gross_annual_income: 150000,
+    state_income_tax_annual: 5000,
+    state: 'Maryland',
+    include_capital_gains: true,
   },
 })
 
@@ -128,5 +148,43 @@ describe('CostTable', () => {
     expect(taxBenefitIdx).toBeGreaterThan(-1)
     expect(totalOutflowsIdx).toBeGreaterThan(-1)
     expect(taxBenefitIdx).toBeLessThan(totalOutflowsIdx)
+  })
+
+  it('CG-12: "Capital gains tax" row renders when taxes_enabled and total_capital_gains_tax > 0', () => {
+    expect(capitalGainsResult.totals.total_capital_gains_tax).toBeGreaterThan(0)
+    render(<CostTable result={capitalGainsResult} />)
+    expect(screen.getByText('Capital gains tax')).toBeTruthy()
+  })
+
+  it('CG-13: row absent when taxes_enabled is false', () => {
+    render(<CostTable result={result} />)
+    expect(screen.queryByText('Capital gains tax')).toBeNull()
+  })
+
+  it('CG-14: row absent when total_capital_gains_tax is 0 (fully excluded case)', () => {
+    expect(taxResult.totals.total_capital_gains_tax).toBe(0)
+    render(<CostTable result={taxResult} />)
+    expect(screen.queryByText('Capital gains tax')).toBeNull()
+  })
+
+  it('CG-15: row displays as a positive cost (no negative sign), formatted as currency', () => {
+    render(<CostTable result={capitalGainsResult} />)
+    const label = screen.getByText('Capital gains tax')
+    const row = label.closest('tr')
+    expect(row?.textContent).toMatch(/\$[\d,]+/)
+    expect(row?.textContent).not.toMatch(/-\$[\d,]+/)
+  })
+
+  it('CG-16: row is positioned after Sale proceeds, before Investment portfolio', () => {
+    render(<CostTable result={capitalGainsResult} />)
+    const rows = Array.from(document.querySelectorAll('tbody tr'))
+    const saleProceedsIdx = rows.findIndex((r) => r.textContent?.includes('Sale proceeds'))
+    const capitalGainsIdx = rows.findIndex((r) => r.textContent?.includes('Capital gains tax'))
+    const investmentIdx = rows.findIndex((r) => r.textContent?.includes('Investment portfolio'))
+    expect(saleProceedsIdx).toBeGreaterThan(-1)
+    expect(capitalGainsIdx).toBeGreaterThan(-1)
+    expect(investmentIdx).toBeGreaterThan(-1)
+    expect(saleProceedsIdx).toBeLessThan(capitalGainsIdx)
+    expect(capitalGainsIdx).toBeLessThan(investmentIdx)
   })
 })
