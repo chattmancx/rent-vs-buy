@@ -112,6 +112,33 @@ describe('estimateStateIncomeTax — multi-bracket states (single)', () => {
 })
 
 // ---------------------------------------------------------------------------
+// Group 4b — PDF-sourced states (state-brackets-pdf.json)
+// ---------------------------------------------------------------------------
+describe('estimateStateIncomeTax — PDF-sourced states', () => {
+  it('Virginia single $50K: std_ded=$8,750 → taxable=$41,250 → $2,114', () => {
+    // VA single brackets: 2%@$0, 3%@$3K, 5%@$5K, 5.75%@$17K
+    // std deduction: $8,750; taxable: $41,250
+    // $3000×0.02 + $2000×0.03 + $12000×0.05 + $24250×0.0575
+    // = $60 + $60 + $600 + $1394.375 = $2,114.375
+    expect(estimateStateIncomeTax('Virginia', 50_000, 'single')).toBeCloseTo(2_114, 0)
+  })
+
+  it('South Carolina single $50K: std_ded=$8,350 → taxable=$41,650 → $1,843', () => {
+    // SC single brackets: 0%@$0, 3%@$3,640, 6%@$18,230
+    // std deduction: $8,350; taxable: $41,650
+    // $3640×0 + $14590×0.03 + $23420×0.06 = $0 + $437.70 + $1,405.20 = $1,842.90
+    expect(estimateStateIncomeTax('South Carolina', 50_000, 'single')).toBeCloseTo(1_843, 0)
+  })
+
+  it('Idaho single $50K: flat 5.3% above $4,811 floor, std_ded=$16,100 → taxable=$33,900 → $1,542', () => {
+    // Idaho single: single bracket, floor=$4,811, rate=5.3%
+    // std deduction: $16,100; taxable: $33,900
+    // ($33,900 - $4,811) × 0.053 = $29,089 × 0.053 = $1,541.72
+    expect(estimateStateIncomeTax('Idaho', 50_000, 'single')).toBeCloseTo(1_542, 0)
+  })
+})
+
+// ---------------------------------------------------------------------------
 // Group 5 — MFJ filing status
 // ---------------------------------------------------------------------------
 describe('estimateStateIncomeTax — MFJ filing status', () => {

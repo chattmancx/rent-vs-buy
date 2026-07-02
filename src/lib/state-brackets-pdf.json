@@ -1,0 +1,78 @@
+{
+  "Maryland": {
+    "no_tax": false,
+    "single": [
+      { "floor": 0, "rate": 0.02 },
+      { "floor": 1000, "rate": 0.03 },
+      { "floor": 2000, "rate": 0.04 },
+      { "floor": 3000, "rate": 0.0475 },
+      { "floor": 100000, "rate": 0.05 },
+      { "floor": 125000, "rate": 0.0525 },
+      { "floor": 150000, "rate": 0.055 },
+      { "floor": 250000, "rate": 0.0575 },
+      { "floor": 500000, "rate": 0.0625 },
+      { "floor": 1000000, "rate": 0.065 }
+    ],
+    "married_filing_jointly": [
+      { "floor": 0, "rate": 0.02 },
+      { "floor": 1000, "rate": 0.03 },
+      { "floor": 2000, "rate": 0.04 },
+      { "floor": 3000, "rate": 0.0475 },
+      { "floor": 150000, "rate": 0.05 },
+      { "floor": 175000, "rate": 0.0525 },
+      { "floor": 225000, "rate": 0.055 },
+      { "floor": 300000, "rate": 0.0575 },
+      { "floor": 600000, "rate": 0.0625 },
+      { "floor": 1200000, "rate": 0.065 }
+    ],
+    "single_standard_deduction": 3350,
+    "mfj_standard_deduction": 6700,
+    "source_pdf": "MARYLAND-20260101.pdf",
+    "verified_date": "2026-07-02"
+  },
+  "Virginia": {
+    "no_tax": false,
+    "single": [
+      { "floor": 0, "rate": 0.02 },
+      { "floor": 3000, "rate": 0.03 },
+      { "floor": 5000, "rate": 0.05 },
+      { "floor": 17000, "rate": 0.0575 }
+    ],
+    "married_filing_jointly": [
+      { "floor": 0, "rate": 0.02 },
+      { "floor": 3000, "rate": 0.03 },
+      { "floor": 5000, "rate": 0.05 },
+      { "floor": 17000, "rate": 0.0575 }
+    ],
+    "single_standard_deduction": 8750,
+    "mfj_standard_deduction": 17500,
+    "source_pdf": "VIRGINIA-20260101.pdf",
+    "verified_date": "2026-07-02"
+  },
+  "South Carolina": {
+    "no_tax": false,
+    "single": [
+      { "floor": 0, "rate": 0 },
+      { "floor": 3640, "rate": 0.03 },
+      { "floor": 18230, "rate": 0.06 }
+    ],
+    "married_filing_jointly": [
+      { "floor": 0, "rate": 0 },
+      { "floor": 3640, "rate": 0.03 },
+      { "floor": 18230, "rate": 0.06 }
+    ],
+    "single_standard_deduction": 8350,
+    "mfj_standard_deduction": 16700,
+    "source_pdf": "SOUTH CAROLINA-20251104.pdf",
+    "verified_date": "2026-07-02"
+  },
+  "Idaho": {
+    "no_tax": false,
+    "single": [{ "floor": 4811, "rate": 0.053 }],
+    "married_filing_jointly": [{ "floor": 9622, "rate": 0.053 }],
+    "single_standard_deduction": 16100,
+    "mfj_standard_deduction": 32200,
+    "source_pdf": "IDAHO-20260101.pdf",
+    "verified_date": "2026-07-02"
+  }
+}

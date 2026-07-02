@@ -1,4 +1,5 @@
 import RAW_BRACKETS from './state-brackets.json'
+import RAW_PDF_BRACKETS from './state-brackets-pdf.json'
 
 export const STATE_TAX_SOURCE =
   'reference/income-tax-brackets/2026-State-Individual-Income-Tax-Rate-Brackets.xlsx'
@@ -123,14 +124,56 @@ for (const [state, raw] of Object.entries(RAW_BRACKETS as Record<string, RawEntr
 }
 
 // ---------------------------------------------------------------------------
-// PDF lookup stub — returns null always; filled in by a future stage
+// PDF-sourced bracket cache (hand-verified subset)
 // ---------------------------------------------------------------------------
+//
+// reference/income-tax-brackets/ is gitignored and not shipped to the
+// deployed app, and estimateStateIncomeTax runs synchronously in the
+// browser — so this cannot be a live scan-and-parse of the PDFs. It also
+// cannot be a generic automated parser: sampling the source PDFs during
+// evaluation found formats too inconsistent to trust (form-instruction
+// booklets, third-party payroll-withholding bulletins with different
+// bracket structures, and at least one stale PDF whose graduated brackets
+// had been superseded by a flat-rate law change already reflected in the
+// Excel-derived data). A generic parser would have silently produced wrong
+// tax estimates for several states.
+//
+// Instead, src/lib/state-brackets-pdf.json is a hand-authored, intentionally
+// partial dataset: each entry's bracket floors/rates were read from the
+// state's official PDF and cross-checked against state-brackets.json before
+// being added — only added when they agreed, or the PDF was demonstrably
+// more current. Standard deduction figures are carried over from the Excel
+// dataset when the PDF itself doesn't restate one.
+//
+// Currently covers: Maryland, Virginia, South Carolina, Idaho. (Idaho's PDF
+// is a payroll-withholding bulletin, not a statutory bracket table — it was
+// used to confirm the flat 5.3% rate only; the bracket floor and standard
+// deduction are carried over from the Excel data, which use a different
+// deduction mechanic than the withholding bulletin's per-exemption allowance.)
+//
+// To add a state: read its PDF in reference/income-tax-brackets/, extract
+// the bracket floors/rates, and cross-check them against the existing
+// state-brackets.json entry for that state. Only add the entry if the two
+// sources agree, or if you can confirm the PDF reflects a more recent law
+// change than the Excel data. Do not add an entry from PDF text alone.
+type RawPdfEntry = RawEntry & { source_pdf: string; verified_date: string }
 
-function lookupStatePdfBrackets(_canonicalState: string): StateBracketSchedule | null {
-  // TODO: scan reference/income-tax-brackets/ for [STATE]-[YYYYMMDD].pdf
-  // Parse PDF, extract brackets, return StateBracketSchedule
-  // For now: no PDF parsing implemented
-  return null
+const pdfBracketCache = new Map<string, StateBracketSchedule>()
+
+for (const [state, raw] of Object.entries(RAW_PDF_BRACKETS as Record<string, RawPdfEntry>)) {
+  pdfBracketCache.set(state, {
+    no_tax: raw.no_tax,
+    single: raw.single,
+    married_filing_jointly: raw.married_filing_jointly,
+    single_standard_deduction: raw.single_standard_deduction,
+    mfj_standard_deduction: raw.mfj_standard_deduction,
+    source: 'pdf',
+    as_of_date: raw.verified_date,
+  })
+}
+
+function lookupStatePdfBrackets(canonicalState: string): StateBracketSchedule | null {
+  return pdfBracketCache.get(canonicalState) ?? null
 }
 
 // ---------------------------------------------------------------------------
