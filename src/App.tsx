@@ -50,7 +50,7 @@ export default function App() {
           </p>
           <p className="mt-1 text-xs text-ink-muted">Developed Using Claude Code</p>
         </div>
-        <div className="flex flex-col md:grid md:grid-cols-5 md:gap-6">
+        <div className="flex flex-col gap-6 md:grid md:grid-cols-5">
           <div className="space-y-5 rounded-lg border border-surface-rule bg-surface-panel p-6 md:col-span-2">
             <BasicInputs
               input={input}
