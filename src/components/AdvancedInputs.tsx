@@ -180,7 +180,7 @@ export function AdvancedInputs({
           suffix="/mo"
           min={0}
           step={10}
-          tooltip="Combined monthly utilities (electric, gas, water, etc.) in the first year."
+          tooltip="Combined monthly utilities (electric, gas, water, etc.) in the first year. Assuming the same property types are being compared."
         />
         <InputField
           label="Utilities Escalation"

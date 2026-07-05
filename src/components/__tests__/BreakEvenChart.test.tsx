@@ -7,7 +7,9 @@ import { DEFAULT_INPUT } from '../../lib/defaults'
 import { deflate } from '../../lib/inflation'
 
 type ChartPoint = { year: number; owner: number; renter: number }
+type ChartMargin = { top: number; right: number; bottom: number; left: number }
 let capturedChartData: ChartPoint[] = []
+let capturedMargin: ChartMargin | undefined
 
 vi.mock('recharts', async () => {
   const actual = await vi.importActual<typeof import('recharts')>('recharts')
@@ -16,8 +18,9 @@ vi.mock('recharts', async () => {
     ResponsiveContainer: ({ children }: { children: React.ReactNode }) => (
       <div data-testid="responsive-container">{children}</div>
     ),
-    LineChart: (props: { data: ChartPoint[] } & Record<string, unknown>) => {
+    LineChart: (props: { data: ChartPoint[]; margin?: ChartMargin } & Record<string, unknown>) => {
       capturedChartData = props.data
+      capturedMargin = props.margin
       const ActualLineChart = actual.LineChart
       return <ActualLineChart {...props} />
     },
@@ -106,6 +109,13 @@ describe('BreakEvenChart', () => {
 
     expect(realYear3?.owner).toBeCloseTo(deflate(nominalYear3!.owner, 0.03, 3), 6)
     expect(realYear9?.owner).toBeCloseTo(deflate(nominalYear9!.owner, 0.03, 9), 6)
+  })
+
+  it('S14-12: chart margin.top is increased to prevent the break-even label from clipping', () => {
+    const result = computeScenario(DEFAULT_INPUT)
+    const updateShared = vi.fn()
+    render(<BreakEvenChart result={result} updateShared={updateShared} />)
+    expect(capturedMargin?.top).toBe(28)
   })
 
   it('INF-10: chart reproduces nominal values when real_dollars is false', () => {

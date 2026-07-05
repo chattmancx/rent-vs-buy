@@ -454,6 +454,87 @@ describe('computeScenario — capital gains tax', () => {
   })
 })
 
+describe('computeScenario — Stage 14: down payment and deposits', () => {
+  it('S14-1: total_ownership_outflows includes down payment', () => {
+    const result = computeScenario(SCENARIO_A)
+    const downPaymentAmount =
+      (SCENARIO_A.ownership.purchase_price * SCENARIO_A.ownership.down_payment_pct) / 100
+    const sumWithoutDownPayment =
+      result.totals.total_principal_paid +
+      result.totals.total_interest_paid +
+      result.totals.total_pmi_paid +
+      result.totals.total_property_taxes +
+      result.totals.total_homeowner_insurance +
+      result.totals.total_hoa +
+      result.totals.total_maintenance +
+      result.totals.total_utilities_owner +
+      result.totals.total_closing_costs
+    expect(result.totals.total_ownership_outflows).toBeCloseTo(
+      sumWithoutDownPayment + downPaymentAmount,
+      2,
+    )
+  })
+
+  it('S14-3: renter_final_net_worth exceeds renter_investment_balance by exactly the deposit refund', () => {
+    const withDeposits = computeScenario({
+      ...SCENARIO_A,
+      rental: { ...SCENARIO_A.rental, security_deposit: 2000, pet_deposit: 500 },
+    })
+    const lastMonth = withDeposits.monthly_schedule[withDeposits.monthly_schedule.length - 1]!
+    expect(
+      withDeposits.totals.renter_final_net_worth - lastMonth.renter_investment_balance,
+    ).toBeCloseTo(2500, 2)
+  })
+
+  it('S14-4: total_rentership_outflows is unaffected by deposit fields', () => {
+    const base = computeScenario(SCENARIO_A)
+    const withDeposits = computeScenario({
+      ...SCENARIO_A,
+      rental: { ...SCENARIO_A.rental, security_deposit: 2000, pet_deposit: 500 },
+    })
+    expect(withDeposits.totals.total_rentership_outflows).toBeCloseTo(
+      base.totals.total_rentership_outflows,
+      6,
+    )
+  })
+
+  it('S14-5: zero-deposit scenario has no phantom refund (regression)', () => {
+    const result = computeScenario(SCENARIO_A)
+    const lastMonth = result.monthly_schedule[result.monthly_schedule.length - 1]!
+    expect(result.totals.renter_final_net_worth).toBeCloseTo(lastMonth.renter_investment_balance, 6)
+  })
+
+  it('S14-6: deposits reduce the renter upfront seed amount', () => {
+    const noDeposits = computeScenario(SCENARIO_SIMPLE)
+    const withDeposits = computeScenario({
+      ...SCENARIO_SIMPLE,
+      rental: { ...SCENARIO_SIMPLE.rental, security_deposit: 2000, pet_deposit: 500 },
+    })
+    const seedNoDeposits = noDeposits.monthly_schedule[0]!.renter_investment_balance
+    const seedWithDeposits = withDeposits.monthly_schedule[0]!.renter_investment_balance
+    expect(seedNoDeposits - seedWithDeposits).toBeCloseTo(2500, 2)
+  })
+
+  it('S14-7: pet_deposit alone behaves identically to security_deposit alone', () => {
+    const withSecurityOnly = computeScenario({
+      ...SCENARIO_SIMPLE,
+      rental: { ...SCENARIO_SIMPLE.rental, security_deposit: 1500, pet_deposit: 0 },
+    })
+    const withPetOnly = computeScenario({
+      ...SCENARIO_SIMPLE,
+      rental: { ...SCENARIO_SIMPLE.rental, security_deposit: 0, pet_deposit: 1500 },
+    })
+    expect(withPetOnly.totals.renter_final_net_worth).toBeCloseTo(
+      withSecurityOnly.totals.renter_final_net_worth,
+      6,
+    )
+    expect(withPetOnly.monthly_schedule[0]!.renter_investment_balance).toBeCloseTo(
+      withSecurityOnly.monthly_schedule[0]!.renter_investment_balance,
+      6,
+    )
+  })
+})
+
 describe('computeScenario — input validation', () => {
   it('throws EngineInputError for NaN input', () => {
     const bad: ScenarioInput = {

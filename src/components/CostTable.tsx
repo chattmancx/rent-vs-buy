@@ -19,8 +19,7 @@ export function CostTable({ result }: CostTableProps) {
   const downPayment = inputs.ownership.purchase_price * (inputs.ownership.down_payment_pct / 100)
   const { real_dollars, inflation_rate, horizon_years } = inputs.shared
 
-  const ownerNetGainLoss =
-    totals.owner_final_net_worth - (totals.total_ownership_outflows + downPayment)
+  const ownerNetGainLoss = totals.owner_final_net_worth - totals.total_ownership_outflows
   const renterNetGainLoss = totals.renter_final_net_worth - totals.total_rentership_outflows
 
   function atHorizon(value: number): number {
@@ -58,7 +57,7 @@ export function CostTable({ result }: CostTableProps) {
         ]
       : []),
     {
-      label: 'Total outflows',
+      label: 'Total Outflows',
       owner: totals.total_ownership_outflows,
       renter: totals.total_rentership_outflows,
       variant: 'subtotal',
@@ -80,7 +79,7 @@ export function CostTable({ result }: CostTableProps) {
       renter: atHorizon(lastRow?.renter_investment_balance ?? 0),
     },
     {
-      label: 'Final net worth',
+      label: 'Final Net Worth',
       owner: atHorizon(totals.owner_final_net_worth),
       renter: atHorizon(totals.renter_final_net_worth),
       variant: 'networth',
@@ -88,10 +87,10 @@ export function CostTable({ result }: CostTableProps) {
     {
       label:
         ownerNetGainLoss >= 0 && renterNetGainLoss >= 0
-          ? 'Net gain'
+          ? 'Net Gain'
           : ownerNetGainLoss < 0 && renterNetGainLoss < 0
-            ? 'Net loss'
-            : 'Net gain / loss',
+            ? 'Net Loss'
+            : 'Net Gain / Loss',
       owner: atHorizon(ownerNetGainLoss),
       renter: atHorizon(renterNetGainLoss),
       variant: 'gainloss',

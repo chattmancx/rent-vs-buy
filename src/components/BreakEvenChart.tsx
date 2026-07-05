@@ -49,7 +49,7 @@ export function BreakEvenChart({ result, updateShared }: BreakEvenChartProps) {
         aria-label={`Net worth over time chart over ${result.inputs.shared.horizon_years} years.${crossoverYear !== null ? ` Buying and renting lines cross at year ${crossoverYear}.` : ' No break-even within the analysis period.'}`}
       >
         <ResponsiveContainer width="100%" height={320}>
-          <LineChart data={chartData} margin={{ top: 8, right: 16, bottom: 8, left: 16 }}>
+          <LineChart data={chartData} margin={{ top: 28, right: 16, bottom: 8, left: 16 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#E2DDD6" />
             <XAxis
               dataKey="year"

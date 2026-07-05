@@ -64,9 +64,9 @@ describe('CostTable', () => {
     expect(screen.getByText('Renting')).toBeTruthy()
   })
 
-  it('renders the Final net worth row', () => {
+  it('renders the Final Net Worth row', () => {
     render(<CostTable result={result} />)
-    expect(screen.getByText('Final net worth')).toBeTruthy()
+    expect(screen.getByText('Final Net Worth')).toBeTruthy()
   })
 
   it('renders formatted currency values containing $', () => {
@@ -137,7 +137,7 @@ describe('CostTable', () => {
 
   it('CT-8: other rows are unaffected', () => {
     render(<CostTable result={taxResult} />)
-    expect(screen.getByText('Final net worth')).toBeTruthy()
+    expect(screen.getByText('Final Net Worth')).toBeTruthy()
   })
 
   it('CT-9: value is formatted as currency matching the rest of the table', () => {
@@ -151,7 +151,7 @@ describe('CostTable', () => {
     render(<CostTable result={taxResult} />)
     const rows = Array.from(document.querySelectorAll('tbody tr'))
     const taxBenefitIdx = rows.findIndex((r) => r.textContent?.includes('Federal tax benefit'))
-    const totalOutflowsIdx = rows.findIndex((r) => r.textContent?.includes('Total outflows'))
+    const totalOutflowsIdx = rows.findIndex((r) => r.textContent?.includes('Total Outflows'))
     expect(taxBenefitIdx).toBeGreaterThan(-1)
     expect(totalOutflowsIdx).toBeGreaterThan(-1)
     expect(taxBenefitIdx).toBeLessThan(totalOutflowsIdx)
@@ -195,7 +195,7 @@ describe('CostTable', () => {
     expect(capitalGainsIdx).toBeLessThan(investmentIdx)
   })
 
-  it('INF-11: "Final net worth" (point-in-time) is deflated when real_dollars is true', () => {
+  it('INF-11: "Final Net Worth" (point-in-time) is deflated when real_dollars is true', () => {
     render(<CostTable result={realDollarsResult} />)
     const expected = formatCurrency(
       deflate(
@@ -204,7 +204,7 @@ describe('CostTable', () => {
         realDollarsResult.inputs.shared.horizon_years,
       ),
     )
-    const row = screen.getByText('Final net worth').closest('tr')
+    const row = screen.getByText('Final Net Worth').closest('tr')
     expect(row?.textContent).toContain(expected)
   })
 
@@ -222,5 +222,46 @@ describe('CostTable', () => {
   it('INF-14: footnote renders when real_dollars is true', () => {
     render(<CostTable result={realDollarsResult} />)
     expect(screen.getByText(/nominal dollars/)).toBeTruthy()
+  })
+
+  it('S14-2: owner Net Gain/Loss does not double-count down payment', () => {
+    render(<CostTable result={result} />)
+    const expectedOwnerGainLoss =
+      result.totals.owner_final_net_worth - result.totals.total_ownership_outflows
+    const rows = Array.from(document.querySelectorAll('tbody tr'))
+    const gainLossRow = rows.find((r) => /Net (Gain|Loss)/.test(r.textContent ?? ''))
+    expect(gainLossRow).toBeDefined()
+    expect(gainLossRow!.textContent).toContain(formatCurrency(expectedOwnerGainLoss))
+  })
+
+  it('S14-8: "Total Outflows" row uses Title Case', () => {
+    render(<CostTable result={result} />)
+    expect(screen.getByText('Total Outflows')).toBeTruthy()
+    expect(screen.queryByText('Total outflows')).toBeNull()
+  })
+
+  it('S14-9: "Final Net Worth" row uses Title Case', () => {
+    render(<CostTable result={result} />)
+    expect(screen.getByText('Final Net Worth')).toBeTruthy()
+    expect(screen.queryByText('Final net worth')).toBeNull()
+  })
+
+  it('S14-10: Net Gain/Net Loss label renders in Title Case, never the old lowercase forms', () => {
+    const scenarios = [
+      result,
+      computeScenario({
+        ...DEFAULT_INPUT,
+        ownership: { ...DEFAULT_INPUT.ownership, purchase_price: 900000, interest_rate: 8 },
+        shared: { ...DEFAULT_INPUT.shared, horizon_years: 2 },
+      }),
+    ]
+    for (const r of scenarios) {
+      const { unmount } = render(<CostTable result={r} />)
+      expect(screen.getByText(/^Net (Gain|Loss|Gain \/ Loss)$/)).toBeTruthy()
+      expect(screen.queryByText('Net gain')).toBeNull()
+      expect(screen.queryByText('Net loss')).toBeNull()
+      expect(screen.queryByText('Net gain / loss')).toBeNull()
+      unmount()
+    }
   })
 })

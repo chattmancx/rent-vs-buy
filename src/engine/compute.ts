@@ -89,9 +89,11 @@ export function computeScenario(input: ScenarioInput): ScenarioResult {
   )
 
   // Opportunity cost seeding: owner's larger upfront outflow seeds the renter's investment balance.
-  // Only admin_fee is a real renter cost; deposits are refundable.
+  // admin_fee is a non-refundable renter cost; security_deposit/pet_deposit are refundable but still
+  // leave the renter's pocket at t=0 — refunded into renterFinalNetWorth at horizon end (see below).
+  const totalRenterDeposits = r.security_deposit + r.pet_deposit
   const ownerUpfront = downPaymentAmount + closingCostsAmount
-  const renterUpfront = r.admin_fee
+  const renterUpfront = r.admin_fee + totalRenterDeposits
   const upfrontDiff = ownerUpfront - renterUpfront
 
   // In the typical case (owner pays more upfront), the renter's investment balance is seeded.
@@ -315,9 +317,10 @@ export function computeScenario(input: ScenarioInput): ScenarioResult {
   const saleProceedsAfterTax = saleProceeds - capitalGainsBreakdown.tax
 
   const ownerFinalNetWorth = saleProceedsAfterTax + lastMonth.owner_investment_balance
-  const renterFinalNetWorth = lastMonth.renter_investment_balance
+  const renterFinalNetWorth = lastMonth.renter_investment_balance + totalRenterDeposits
 
   const totalOwnershipOutflows =
+    downPaymentAmount +
     totalPrincipal +
     totalInterest +
     totalPmi +
