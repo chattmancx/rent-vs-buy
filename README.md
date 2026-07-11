@@ -7,23 +7,25 @@ A client-side TypeScript web app that computes a credible, side-by-side financia
 ## What it models
 
 - Full amortization with PMI removal at 80% LTV of purchase price
+- One-time refinance event: new rate, new term, and new closing costs at a chosen month, with the pre/post-event schedules stitched at the exact remaining balance
 - Opportunity cost on down payment, closing costs, and refundable deposits (capital the renter keeps invested, refunded at horizon end)
-- Monthly cost differential invested at a user-adjustable return rate
+- Monthly cost differential invested at a user-adjustable return rate — entered as a real (inflation-adjusted) rate when viewing figures in today's dollars, automatically converted to its nominal equivalent for the underlying compounding
 - Sale proceeds at horizon end (appreciated home value minus loan balance minus selling costs), net of federal capital gains tax (IRC §121 primary-residence exclusion)
 - Federal tax effects: mortgage interest deduction, SALT cap, itemize vs. standard deduction, state income tax estimate
 - Optional inflation adjustment — display figures in today's dollars without changing the underlying model
-- Variable analysis horizon (1–30 years)
+- Variable analysis horizon (1–40 years)
 - Year-over-year escalation of all costs (rent, HOA, maintenance, insurance, utilities)
+- Net Worth, Costs Over Time, and Monthly Costs charts, plus a sensitivity strip showing ±1pp impact of key rates
 
-## Model assumptions and limitations (Tier 4, in progress)
+## Model assumptions and limitations
 
-Tier 2 (core model) and Tier 3 (tax effects + inflation adjustment) are complete and deployed. This tool still does **not** model:
+Tier 2, Tier 3, and Tier 4 are all complete and deployed. This tool does **not** model:
 
 - Adjustable-rate mortgages or non-conventional loan products (FHA/VA/jumbo)
-- Refinancing
 - Geographic variation in tax rates or appreciation
 - Multiple scenarios side-by-side (use the JSON export/import to compare separately)
 - Tax on the invested cost differential (a closed design decision, not a gap)
+- Monthly-granularity escalation changes (e.g., rent increasing 4%/yr for years 1–5 then 6%/yr after) — all costs escalate at a single flat annual rate
 
 Shared URLs embed your full financial scenario and are visible in browser history, host access logs, and referrer headers.
 
