@@ -55,7 +55,7 @@ describe('App input form', () => {
     })
   })
 
-  it('CG-17: "Capital Gains (Expert)" section renders with include_capital_gains checked by default', () => {
+  it('CG-17: "Capital Gains" section renders with include_capital_gains checked by default', () => {
     render(<App />)
     const checkbox = screen.getByLabelText('Include capital gains tax on sale') as HTMLInputElement
     expect(checkbox.checked).toBe(true)
