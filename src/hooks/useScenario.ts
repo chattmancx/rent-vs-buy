@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { computeScenario } from '../engine'
 import type {
   ScenarioInput,
   ScenarioResult,
@@ -11,6 +10,7 @@ import type {
 import { DEFAULT_INPUT } from '../lib/defaults'
 import { encode, decode } from '../lib/url-state'
 import { estimateStateIncomeTax } from '../lib/state-tax'
+import { computeScenarioForDisplay } from '../lib/inflation'
 
 function toStateTaxFilingStatus(
   status: TaxInput['filing_status'],
@@ -44,11 +44,15 @@ function initState(): ScenarioState {
     const decoded = decode(raw)
     if (decoded !== null) {
       const withTax = computeWithTax(decoded)
-      return { input: withTax, result: computeScenario(withTax), urlError: false }
+      return { input: withTax, result: computeScenarioForDisplay(withTax), urlError: false }
     }
-    return { input: DEFAULT_INPUT, result: computeScenario(DEFAULT_INPUT), urlError: true }
+    return {
+      input: DEFAULT_INPUT,
+      result: computeScenarioForDisplay(DEFAULT_INPUT),
+      urlError: true,
+    }
   }
-  return { input: DEFAULT_INPUT, result: computeScenario(DEFAULT_INPUT), urlError: false }
+  return { input: DEFAULT_INPUT, result: computeScenarioForDisplay(DEFAULT_INPUT), urlError: false }
 }
 
 export function useScenario() {
@@ -69,7 +73,7 @@ export function useScenario() {
         ...prev.input,
         ownership: { ...prev.input.ownership, ...patch },
       }
-      return { input: newInput, result: computeScenario(newInput), urlError: false }
+      return { input: newInput, result: computeScenarioForDisplay(newInput), urlError: false }
     })
   }, [])
 
@@ -79,7 +83,7 @@ export function useScenario() {
         ...prev.input,
         rental: { ...prev.input.rental, ...patch },
       }
-      return { input: newInput, result: computeScenario(newInput), urlError: false }
+      return { input: newInput, result: computeScenarioForDisplay(newInput), urlError: false }
     })
   }, [])
 
@@ -89,7 +93,7 @@ export function useScenario() {
         ...prev.input,
         shared: { ...prev.input.shared, ...patch },
       }
-      return { input: newInput, result: computeScenario(newInput), urlError: false }
+      return { input: newInput, result: computeScenarioForDisplay(newInput), urlError: false }
     })
   }, [])
 
@@ -99,7 +103,7 @@ export function useScenario() {
 
   const replaceInput = useCallback((newInput: ScenarioInput) => {
     const withTax = computeWithTax(newInput)
-    setState({ input: withTax, result: computeScenario(withTax), urlError: false })
+    setState({ input: withTax, result: computeScenarioForDisplay(withTax), urlError: false })
   }, [])
 
   const updateTax = useCallback((patch: Partial<TaxInput>) => {
@@ -109,7 +113,7 @@ export function useScenario() {
         tax: { ...prev.input.tax, ...patch },
       }
       const withTax = computeWithTax(merged)
-      return { input: withTax, result: computeScenario(withTax), urlError: false }
+      return { input: withTax, result: computeScenarioForDisplay(withTax), urlError: false }
     })
   }, [])
 

@@ -1,9 +1,41 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { useScenario } from '../useScenario'
+import { computeScenario } from '../../engine'
+import { deriveNominalRate } from '../../lib/inflation'
 
 beforeEach(() => {
   window.history.replaceState(null, '', '/')
+})
+
+describe('useScenario — real/nominal investment return', () => {
+  it('S18-6: updateShared({ real_dollars: true }) produces a result reflecting the Fisher-derived nominal rate, not the raw entered rate', () => {
+    const { result } = renderHook(() => useScenario())
+    act(() => {
+      result.current.updateShared({ real_dollars: true, inflation_rate: 0.03 })
+    })
+    const { input, result: scenarioResult } = result.current
+
+    const nominalRate = deriveNominalRate(
+      input.shared.investment_return_rate,
+      input.shared.inflation_rate,
+    )
+    const expected = computeScenario({
+      ...input,
+      shared: { ...input.shared, investment_return_rate: nominalRate },
+    })
+    expect(scenarioResult.totals.renter_final_net_worth).toBeCloseTo(
+      expected.totals.renter_final_net_worth,
+      6,
+    )
+
+    // Distinguishable from naively using the raw entered rate directly
+    const naive = computeScenario(input)
+    expect(scenarioResult.totals.renter_final_net_worth).not.toBeCloseTo(
+      naive.totals.renter_final_net_worth,
+      0,
+    )
+  })
 })
 
 describe('useScenario — updateTax', () => {

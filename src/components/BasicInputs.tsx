@@ -78,7 +78,7 @@ export function BasicInputs({
         <input
           type="range"
           min={1}
-          max={30}
+          max={40}
           step={1}
           value={shared.horizon_years}
           onChange={(e) => updateShared({ horizon_years: parseInt(e.target.value, 10) })}

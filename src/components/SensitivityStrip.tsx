@@ -1,7 +1,8 @@
 import { useMemo } from 'react'
-import { computeScenario, EngineInputError } from '../engine'
+import { EngineInputError } from '../engine'
 import type { ScenarioInput, ScenarioResult } from '../engine'
 import { formatDelta } from '../lib/format'
+import { computeScenarioForDisplay } from '../lib/inflation'
 
 type SensitivityStripProps = {
   input: ScenarioInput
@@ -30,7 +31,7 @@ export function SensitivityStrip({ input, result }: SensitivityStripProps) {
 
     function computeDelta(tweakedInput: ScenarioInput): number | null {
       try {
-        const tweaked = computeScenario(tweakedInput)
+        const tweaked = computeScenarioForDisplay(tweakedInput)
         return tweaked.verdict.owner_net_worth - tweaked.verdict.renter_net_worth - baseAdvantage
       } catch (e) {
         if (e instanceof EngineInputError) return null

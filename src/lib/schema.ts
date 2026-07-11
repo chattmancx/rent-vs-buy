@@ -41,7 +41,7 @@ const RentalSchema = z.object({
 const SharedSchema = z.object({
   utilities_monthly_base: z.number().finite().min(0),
   utilities_increase_rate: z.number().finite().min(-0.5).max(0.5),
-  horizon_years: z.number().finite().int().min(1).max(30),
+  horizon_years: z.number().finite().int().min(1).max(40),
   investment_return_rate: z.number().finite().min(-0.5).max(0.5),
   invest_vs_spend_ratio: z.number().finite().min(0).max(1),
   real_dollars: z.boolean().default(false),

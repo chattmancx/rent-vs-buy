@@ -23,13 +23,13 @@ describe('ScenarioInputSchema', () => {
     expect(parse(withShared({ horizon_years: 0 }))).toBe(false)
   })
 
-  it('rejects horizon_years: 31', () => {
-    expect(parse(withShared({ horizon_years: 31 }))).toBe(false)
+  it('S18-2: rejects horizon_years: 41', () => {
+    expect(parse(withShared({ horizon_years: 41 }))).toBe(false)
   })
 
-  it('accepts horizon_years at boundaries (1 and 30)', () => {
+  it('S18-1: accepts horizon_years at boundaries (1 and 40)', () => {
     expect(parse(withShared({ horizon_years: 1 }))).toBe(true)
-    expect(parse(withShared({ horizon_years: 30 }))).toBe(true)
+    expect(parse(withShared({ horizon_years: 40 }))).toBe(true)
   })
 
   it('rejects invest_vs_spend_ratio outside [0, 1]', () => {

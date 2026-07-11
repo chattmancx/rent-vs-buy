@@ -39,7 +39,7 @@ export type RentalInput = {
 export type SharedInput = {
   utilities_monthly_base: number // USD per month at year 1
   utilities_increase_rate: number // annual, decimal
-  horizon_years: number // 1 to 30
+  horizon_years: number // 1 to 40
   investment_return_rate: number // annual, decimal, e.g. 0.075
   invest_vs_spend_ratio: number // 0.0 to 1.0
   real_dollars: boolean // display-only; not consumed by computeScenario — see Stage 13 brief
