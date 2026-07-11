@@ -4,6 +4,8 @@ import {
   computeMonthlyPmi,
   computeMonthlyPropertyTaxBase,
   buildAmortizationSchedule,
+  buildAmortizationScheduleWithRefinance,
+  type RefinanceParams,
 } from '../mortgage'
 
 describe('computeMonthlyMortgagePayment', () => {
@@ -92,5 +94,186 @@ describe('computeMonthlyPropertyTaxBase', () => {
 
   it('uses assessed value when provided', () => {
     expect(computeMonthlyPropertyTaxBase(1.2, 400000, 350000)).toBeCloseTo(350, 5)
+  })
+})
+
+describe('buildAmortizationScheduleWithRefinance', () => {
+  const loanAmount = 320000
+  const rate = 6.722
+  const termYears = 30
+  const purchasePrice = 400000
+
+  it('S17-8: refinance undefined returns a schedule deep-equal to buildAmortizationSchedule, with zero closing costs', () => {
+    const direct = buildAmortizationSchedule(loanAmount, rate, termYears, 0, purchasePrice)
+    const result = buildAmortizationScheduleWithRefinance(
+      loanAmount,
+      rate,
+      termYears,
+      0,
+      purchasePrice,
+      undefined,
+    )
+    expect(result.schedule).toEqual(direct)
+    expect(result.refinance_closing_costs_amount).toBe(0)
+  })
+
+  it('S17-9: triggerMonth=1 uses loanAmount as the new principal (nothing paid yet)', () => {
+    const refinance: RefinanceParams = {
+      triggerMonth: 1,
+      newAnnualInterestRate: 5.0,
+      newLoanTermYears: 15,
+      newClosingCostsPct: 2,
+    }
+    const result = buildAmortizationScheduleWithRefinance(
+      loanAmount,
+      rate,
+      termYears,
+      0,
+      purchasePrice,
+      refinance,
+    )
+    const expectedFresh = buildAmortizationSchedule(loanAmount, 5.0, 15, 0, purchasePrice)
+    expect(result.schedule).toEqual(expectedFresh)
+    expect(result.refinance_closing_costs_amount).toBeCloseTo(loanAmount * 0.02, 5)
+  })
+
+  it('S17-10: mid-horizon refinance stitches at the exact remaining balance with continuous month_index', () => {
+    const original = buildAmortizationSchedule(loanAmount, rate, termYears, 0, purchasePrice)
+    const refinance: RefinanceParams = {
+      triggerMonth: 61,
+      newAnnualInterestRate: 5.0,
+      newLoanTermYears: 15,
+      newClosingCostsPct: 2,
+    }
+    const result = buildAmortizationScheduleWithRefinance(
+      loanAmount,
+      rate,
+      termYears,
+      0,
+      purchasePrice,
+      refinance,
+    )
+    const balanceAtTrigger = original[59]!.remaining_loan_balance
+    expect(result.schedule.length).toBe(60 + 15 * 12)
+    expect(result.refinance_closing_costs_amount).toBeCloseTo(balanceAtTrigger * 0.02, 5)
+    // First 60 months are byte-identical to the original schedule
+    expect(result.schedule.slice(0, 60)).toEqual(original.slice(0, 60))
+    // month_index is continuous 1..N with no gaps or duplicates
+    result.schedule.forEach((month, index) => {
+      expect(month.month_index).toBe(index + 1)
+    })
+    // Post-event schedule starts fresh from the exact remaining balance
+    const expectedPostEvent = buildAmortizationSchedule(balanceAtTrigger, 5.0, 15, 0, purchasePrice)
+    expect(result.schedule[60]!.principal_payment).toBeCloseTo(
+      expectedPostEvent[0]!.principal_payment,
+      5,
+    )
+  })
+
+  it('S17-11: triggerMonth beyond the original schedule length is a no-op', () => {
+    const original = buildAmortizationSchedule(loanAmount, rate, termYears, 0, purchasePrice)
+    const refinance: RefinanceParams = {
+      triggerMonth: original.length + 1,
+      newAnnualInterestRate: 5.0,
+      newLoanTermYears: 15,
+      newClosingCostsPct: 2,
+    }
+    const result = buildAmortizationScheduleWithRefinance(
+      loanAmount,
+      rate,
+      termYears,
+      0,
+      purchasePrice,
+      refinance,
+    )
+    expect(result.schedule).toEqual(original)
+    expect(result.refinance_closing_costs_amount).toBe(0)
+  })
+
+  it('S17-12: triggerMonth exactly at the last month is NOT treated as a no-op', () => {
+    const original = buildAmortizationSchedule(loanAmount, rate, termYears, 0, purchasePrice)
+    const refinance: RefinanceParams = {
+      triggerMonth: original.length,
+      newAnnualInterestRate: 5.0,
+      newLoanTermYears: 15,
+      newClosingCostsPct: 2,
+    }
+    const result = buildAmortizationScheduleWithRefinance(
+      loanAmount,
+      rate,
+      termYears,
+      0,
+      purchasePrice,
+      refinance,
+    )
+    expect(result.schedule).not.toEqual(original)
+    expect(result.refinance_closing_costs_amount).toBeGreaterThan(0)
+    expect(result.schedule.length).toBe(original.length - 1 + 15 * 12)
+  })
+
+  it('S17-13: a short new loan term causes early payoff before the original term would have ended', () => {
+    const refinance: RefinanceParams = {
+      triggerMonth: 121, // 10 years in
+      newAnnualInterestRate: 5.0,
+      newLoanTermYears: 1,
+      newClosingCostsPct: 2,
+    }
+    const result = buildAmortizationScheduleWithRefinance(
+      loanAmount,
+      rate,
+      termYears,
+      0,
+      purchasePrice,
+      refinance,
+    )
+    expect(result.schedule.length).toBe(120 + 12)
+    expect(result.schedule.length).toBeLessThan(termYears * 12)
+    const lastEntry = result.schedule[result.schedule.length - 1]
+    expect(lastEntry).toBeDefined()
+    expect(lastEntry!.remaining_loan_balance).toBeLessThan(1)
+  })
+
+  it('S17-14: refinance closing costs are hand-verified as a percentage of the balance at trigger', () => {
+    const original = buildAmortizationSchedule(loanAmount, rate, termYears, 0, purchasePrice)
+    const balanceAtTrigger = original[119]!.remaining_loan_balance
+    const refinance: RefinanceParams = {
+      triggerMonth: 121,
+      newAnnualInterestRate: 5.0,
+      newLoanTermYears: 15,
+      newClosingCostsPct: 3.5,
+    }
+    const result = buildAmortizationScheduleWithRefinance(
+      loanAmount,
+      rate,
+      termYears,
+      0,
+      purchasePrice,
+      refinance,
+    )
+    expect(result.refinance_closing_costs_amount).toBeCloseTo(balanceAtTrigger * 0.035, 5)
+  })
+
+  it('S17-15: PMI is not reset by refinancing — a balance already below threshold stays PMI-free post-event', () => {
+    // Mirrors the PMI-threshold fixture above: purchase_price $200K, loan $180K, 0% interest.
+    // Balance drops to $160K (80% of purchase price) at month 40; by month 44 it's $158K.
+    const pmiMonthly = 75
+    const refinance: RefinanceParams = {
+      triggerMonth: 45,
+      newAnnualInterestRate: 5.0,
+      newLoanTermYears: 15,
+      newClosingCostsPct: 0,
+    }
+    const result = buildAmortizationScheduleWithRefinance(
+      180000,
+      0,
+      30,
+      pmiMonthly,
+      200000,
+      refinance,
+    )
+    // Index 44 is the first post-event month (indices 0-43 are the 44-month pre-event slice)
+    const firstPostEventMonth = result.schedule[44]
+    expect(firstPostEventMonth).toBeDefined()
+    expect(firstPostEventMonth!.pmi_payment).toBe(0)
   })
 })

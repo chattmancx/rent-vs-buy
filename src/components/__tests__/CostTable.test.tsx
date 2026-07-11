@@ -264,4 +264,28 @@ describe('CostTable', () => {
       unmount()
     }
   })
+
+  it('S17-6: "Refinance closing costs" row renders when refinance_enabled is true, with the correct dollar amount', () => {
+    const refinanceResult = computeScenario({
+      ...DEFAULT_INPUT,
+      ownership: {
+        ...DEFAULT_INPUT.ownership,
+        refinance_enabled: true,
+        refinance_trigger_month: 24,
+        refinance_new_interest_rate: 5.0,
+        refinance_new_loan_term_years: 30,
+        refinance_closing_costs_pct: 2.0,
+      },
+    })
+    render(<CostTable result={refinanceResult} />)
+    expect(screen.getByText('Refinance closing costs')).toBeTruthy()
+    expect(
+      screen.getByText(formatCurrency(refinanceResult.totals.total_refinance_closing_costs)),
+    ).toBeTruthy()
+  })
+
+  it('S17-7: "Refinance closing costs" row is absent when refinance_enabled is false (default)', () => {
+    render(<CostTable result={result} />)
+    expect(screen.queryByText('Refinance closing costs')).toBeNull()
+  })
 })

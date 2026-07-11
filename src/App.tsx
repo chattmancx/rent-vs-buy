@@ -70,7 +70,12 @@ export default function App() {
             </InputSection>
             <InputSection title="Expert Options">
               <div className="col-span-full space-y-2 border-l-2 border-surface-rule pl-4">
-                <ExpertOptions input={input} updateTax={updateTax} updateShared={updateShared} />
+                <ExpertOptions
+                  input={input}
+                  updateTax={updateTax}
+                  updateShared={updateShared}
+                  updateOwnership={updateOwnership}
+                />
               </div>
             </InputSection>
           </div>

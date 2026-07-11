@@ -29,6 +29,15 @@ export function CostTable({ result }: CostTableProps) {
   const rows: RowDef[] = [
     { label: 'Down payment', owner: downPayment, renter: null },
     { label: 'Closing costs', owner: totals.total_closing_costs, renter: null },
+    ...(inputs.ownership.refinance_enabled && totals.total_refinance_closing_costs !== 0
+      ? [
+          {
+            label: 'Refinance closing costs',
+            owner: totals.total_refinance_closing_costs,
+            renter: null,
+          },
+        ]
+      : []),
     { label: 'Admin fee', owner: null, renter: totals.total_admin_fee },
     { label: 'Mortgage principal', owner: totals.total_principal_paid, renter: null },
     { label: 'Mortgage interest', owner: totals.total_interest_paid, renter: null },

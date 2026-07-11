@@ -1,4 +1,4 @@
-import type { ScenarioInput, SharedInput, TaxInput } from '../engine'
+import type { OwnershipInput, ScenarioInput, SharedInput, TaxInput } from '../engine'
 import { toPercent } from '../lib/format'
 import { InputField } from './InputField'
 import { InputSection } from './InputSection'
@@ -8,9 +8,15 @@ type ExpertOptionsProps = {
   input: ScenarioInput
   updateTax: (patch: Partial<TaxInput>) => void
   updateShared: (patch: Partial<SharedInput>) => void
+  updateOwnership: (patch: Partial<OwnershipInput>) => void
 }
 
-export function ExpertOptions({ input, updateTax, updateShared }: ExpertOptionsProps) {
+export function ExpertOptions({
+  input,
+  updateTax,
+  updateShared,
+  updateOwnership,
+}: ExpertOptionsProps) {
   return (
     <>
       <InputSection title="Tax & Income">
@@ -62,6 +68,61 @@ export function ExpertOptions({ input, updateTax, updateShared }: ExpertOptionsP
               suffix="%/yr"
             />
           )}
+        </div>
+      </InputSection>
+
+      <InputSection title="Refinancing">
+        <div className="col-span-full space-y-4">
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={input.ownership.refinance_enabled}
+              onChange={(e) => updateOwnership({ refinance_enabled: e.target.checked })}
+              aria-label="Enable refinance"
+              className="h-4 w-4 accent-accent"
+            />
+            <span className="font-medium text-ink-secondary">Enable refinance</span>
+          </label>
+          <div
+            className={`grid grid-cols-1 gap-4 sm:grid-cols-2 ${input.ownership.refinance_enabled ? '' : 'pointer-events-none opacity-50'}`}
+          >
+            <InputField
+              label="Trigger Month"
+              value={input.ownership.refinance_trigger_month}
+              onChange={(v) => updateOwnership({ refinance_trigger_month: Math.round(v) })}
+              min={1}
+              max={600}
+              step={1}
+              tooltip="The month within the analysis horizon when the refinance takes effect."
+            />
+            <InputField
+              label="New Interest Rate"
+              value={input.ownership.refinance_new_interest_rate}
+              onChange={(v) => updateOwnership({ refinance_new_interest_rate: v })}
+              min={0}
+              max={100}
+              step={0.05}
+              suffix="%/yr"
+            />
+            <InputField
+              label="New Loan Term"
+              value={input.ownership.refinance_new_loan_term_years}
+              onChange={(v) => updateOwnership({ refinance_new_loan_term_years: Math.round(v) })}
+              min={1}
+              max={50}
+              step={1}
+              suffix="yrs"
+            />
+            <InputField
+              label="New Closing Costs"
+              value={input.ownership.refinance_closing_costs_pct}
+              onChange={(v) => updateOwnership({ refinance_closing_costs_pct: v })}
+              min={0}
+              max={20}
+              step={0.1}
+              suffix="%"
+            />
+          </div>
         </div>
       </InputSection>
     </>

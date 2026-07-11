@@ -73,3 +73,59 @@ export function buildAmortizationSchedule(
 
   return schedule
 }
+
+export type RefinanceParams = {
+  triggerMonth: number
+  newAnnualInterestRate: number
+  newLoanTermYears: number
+  newClosingCostsPct: number
+}
+
+export type AmortizationResult = {
+  schedule: AmortizationMonth[]
+  refinance_closing_costs_amount: number // 0 if refinance is undefined, or triggerMonth is beyond the original schedule (no-op)
+}
+
+// Stitches a pre-event schedule (original loan, truncated at the trigger month) to a post-event
+// schedule (fresh amortization seeded with the remaining balance at trigger). Composes
+// buildAmortizationSchedule twice rather than duplicating its math.
+export function buildAmortizationScheduleWithRefinance(
+  loanAmount: number,
+  annualInterestRate: number,
+  loanTermYears: number,
+  pmiMonthlyPayment: number,
+  purchasePrice: number,
+  refinance: RefinanceParams | undefined,
+): AmortizationResult {
+  const originalSchedule = buildAmortizationSchedule(
+    loanAmount,
+    annualInterestRate,
+    loanTermYears,
+    pmiMonthlyPayment,
+    purchasePrice,
+  )
+
+  if (!refinance || refinance.triggerMonth > originalSchedule.length) {
+    return { schedule: originalSchedule, refinance_closing_costs_amount: 0 }
+  }
+
+  const preEventMonths = Math.max(0, refinance.triggerMonth - 1)
+  const preEventSchedule = originalSchedule.slice(0, preEventMonths)
+  const balanceAtTrigger =
+    preEventSchedule[preEventSchedule.length - 1]?.remaining_loan_balance ?? loanAmount
+  const refinanceClosingCostsAmount = balanceAtTrigger * (refinance.newClosingCostsPct / 100)
+
+  // PMI dollar amount is reused as-is, not recomputed against the new balance (documented simplification).
+  const postEventSchedule = buildAmortizationSchedule(
+    balanceAtTrigger,
+    refinance.newAnnualInterestRate,
+    refinance.newLoanTermYears,
+    pmiMonthlyPayment,
+    purchasePrice,
+  ).map((month, index) => ({ ...month, month_index: preEventMonths + index + 1 }))
+
+  return {
+    schedule: [...preEventSchedule, ...postEventSchedule],
+    refinance_closing_costs_amount: refinanceClosingCostsAmount,
+  }
+}

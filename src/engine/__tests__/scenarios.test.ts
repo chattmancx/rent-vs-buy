@@ -18,6 +18,11 @@ const BASE_OWNERSHIP = {
   maintenance_increase_rate: 0.04,
   insurance_increase_rate: 0.06,
   selling_cost_pct: 7.5,
+  refinance_enabled: false,
+  refinance_trigger_month: 60,
+  refinance_new_interest_rate: 6.0,
+  refinance_new_loan_term_years: 30,
+  refinance_closing_costs_pct: 2.0,
 } as const
 
 const BASE_RENTAL = {
@@ -193,6 +198,11 @@ const SCENARIO_SIMPLE: ScenarioInput = {
     maintenance_increase_rate: 0,
     insurance_increase_rate: 0,
     selling_cost_pct: 0,
+    refinance_enabled: false,
+    refinance_trigger_month: 60,
+    refinance_new_interest_rate: 6.0,
+    refinance_new_loan_term_years: 30,
+    refinance_closing_costs_pct: 2.0,
   },
   rental: {
     base_rent_monthly: 1000,
@@ -558,5 +568,115 @@ describe('computeScenario — input validation', () => {
       shared: { ...SCENARIO_SIMPLE.shared, investment_return_rate: -Infinity },
     }
     expect(() => computeScenario(bad)).toThrow(EngineInputError)
+  })
+
+  it('S17-16: throws EngineInputError for a non-finite refinance field even when refinance_enabled is false', () => {
+    const bad: ScenarioInput = {
+      ...SCENARIO_SIMPLE,
+      ownership: {
+        ...SCENARIO_SIMPLE.ownership,
+        refinance_enabled: false,
+        refinance_new_interest_rate: NaN,
+      },
+    }
+    expect(() => computeScenario(bad)).toThrow(EngineInputError)
+  })
+})
+
+describe('computeScenario — refinance', () => {
+  const REFINANCE_SCENARIO: ScenarioInput = {
+    ...SCENARIO_A,
+    ownership: {
+      ...SCENARIO_A.ownership,
+      refinance_enabled: true,
+      refinance_trigger_month: 24,
+      refinance_new_interest_rate: 3.0,
+      refinance_new_loan_term_years: 25,
+      refinance_closing_costs_pct: 2.0,
+    },
+    shared: { ...SCENARIO_A.shared, horizon_years: 20 },
+  }
+  const NO_REFINANCE_SCENARIO: ScenarioInput = {
+    ...REFINANCE_SCENARIO,
+    ownership: { ...REFINANCE_SCENARIO.ownership, refinance_enabled: false },
+  }
+
+  it('S17-17: total_ownership_outflows reconciles with total_refinance_closing_costs included', () => {
+    const result = computeScenario(REFINANCE_SCENARIO)
+    const { totals } = result
+    const reconciled =
+      totals.total_principal_paid +
+      totals.total_interest_paid +
+      totals.total_pmi_paid +
+      totals.total_property_taxes +
+      totals.total_homeowner_insurance +
+      totals.total_hoa +
+      totals.total_maintenance +
+      totals.total_utilities_owner +
+      totals.total_closing_costs +
+      totals.total_refinance_closing_costs +
+      REFINANCE_SCENARIO.ownership.purchase_price *
+        (REFINANCE_SCENARIO.ownership.down_payment_pct / 100)
+    expect(totals.total_refinance_closing_costs).toBeGreaterThan(0)
+    expect(totals.total_ownership_outflows).toBeCloseTo(reconciled, 5)
+  })
+
+  it('S17-18: a large rate cut produces higher owner net worth than not refinancing, over a long horizon', () => {
+    const withRefinance = computeScenario(REFINANCE_SCENARIO)
+    const withoutRefinance = computeScenario(NO_REFINANCE_SCENARIO)
+    expect(withRefinance.totals.owner_final_net_worth).toBeGreaterThan(
+      withoutRefinance.totals.owner_final_net_worth,
+    )
+  })
+
+  it("S17-19: the refinance fee is not folded into the trigger month's owner_total_monthly_cost, but does hit total outflows and final net worth", () => {
+    const withRefinance = computeScenario(REFINANCE_SCENARIO)
+    const withoutRefinance = computeScenario(NO_REFINANCE_SCENARIO)
+    const triggerMonthRow = withRefinance.monthly_schedule[23]! // month 24, 0-indexed
+    // owner_total_monthly_cost is exactly the sum of the recurring componentized fields —
+    // no hidden extra lump sum for the one-time refinance fee is folded in.
+    const recurringSum =
+      triggerMonthRow.principal_payment +
+      triggerMonthRow.interest_payment +
+      triggerMonthRow.pmi_payment +
+      triggerMonthRow.property_tax +
+      triggerMonthRow.homeowner_insurance +
+      triggerMonthRow.hoa +
+      triggerMonthRow.home_maintenance +
+      triggerMonthRow.utilities_owner
+    expect(triggerMonthRow.owner_total_monthly_cost).toBeCloseTo(recurringSum, 6)
+
+    // But the fee does hit totals and final net worth
+    expect(withRefinance.totals.total_ownership_outflows).not.toBeCloseTo(
+      withoutRefinance.totals.total_ownership_outflows,
+      0,
+    )
+    expect(withRefinance.totals.owner_final_net_worth).not.toBeCloseTo(
+      withoutRefinance.totals.owner_final_net_worth,
+      0,
+    )
+  })
+
+  it('S17-20: a short new loan term inside a long horizon zeroes out loan fields once the combined schedule ends', () => {
+    const shortTermScenario: ScenarioInput = {
+      ...SCENARIO_A,
+      ownership: {
+        ...SCENARIO_A.ownership,
+        refinance_enabled: true,
+        refinance_trigger_month: 12,
+        refinance_new_interest_rate: 4.0,
+        refinance_new_loan_term_years: 1,
+        refinance_closing_costs_pct: 1.0,
+      },
+      shared: { ...SCENARIO_A.shared, horizon_years: 10 },
+    }
+    const result = computeScenario(shortTermScenario)
+    // Combined schedule ends at month 12 (pre-event) + 12 (1-year post-event term) = month 24
+    const monthAfterPayoff = result.monthly_schedule[24] // month 25, 0-indexed
+    expect(monthAfterPayoff).toBeDefined()
+    expect(monthAfterPayoff!.principal_payment).toBe(0)
+    expect(monthAfterPayoff!.interest_payment).toBe(0)
+    expect(monthAfterPayoff!.pmi_payment).toBe(0)
+    expect(monthAfterPayoff!.remaining_loan_balance).toBe(0)
   })
 })

@@ -16,6 +16,11 @@ export type OwnershipInput = {
   maintenance_increase_rate: number // annual, decimal
   insurance_increase_rate: number // annual, decimal
   selling_cost_pct: number // percentage of sale price at horizon end
+  refinance_enabled: boolean
+  refinance_trigger_month: number // 1-based month within the horizon the refinance takes effect
+  refinance_new_interest_rate: number // annual percentage, same convention as interest_rate
+  refinance_new_loan_term_years: number
+  refinance_closing_costs_pct: number // percentage of the refinanced (remaining) balance at trigger month
 }
 
 export type RentalInput = {
@@ -118,6 +123,7 @@ export type ScenarioTotals = {
   total_maintenance: number
   total_utilities_owner: number
   total_closing_costs: number
+  total_refinance_closing_costs: number // USD; 0 when refinance_enabled is false
   total_ownership_outflows: number
   sale_proceeds: number
   owner_final_net_worth: number

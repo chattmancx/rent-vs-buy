@@ -8,9 +8,10 @@ import {
   EngineInputError,
 } from './types'
 import {
-  buildAmortizationSchedule,
+  buildAmortizationScheduleWithRefinance,
   computeMonthlyPmi,
   computeMonthlyPropertyTaxBase,
+  type RefinanceParams,
 } from './mortgage'
 import { escalate } from './rent'
 import { computeMonthlyInvestmentRate, growBalance } from './investment'
@@ -52,6 +53,10 @@ function validateInputs(input: ScenarioInput): void {
     input.shared.invest_vs_spend_ratio,
     input.tax.gross_annual_income,
     input.tax.state_income_tax_annual,
+    input.ownership.refinance_trigger_month,
+    input.ownership.refinance_new_interest_rate,
+    input.ownership.refinance_new_loan_term_years,
+    input.ownership.refinance_closing_costs_pct,
   ]
 
   for (const v of allValues) {
@@ -76,17 +81,29 @@ export function computeScenario(input: ScenarioInput): ScenarioResult {
     o.assessed_value,
   )
   const totalMonthsHorizon = s.horizon_years * 12
-  const totalMonthsLoan = o.loan_term_years * 12
   const monthlyInvestRate = computeMonthlyInvestmentRate(s.investment_return_rate)
 
-  // Build full amortization schedule for the entire loan term
-  const fullAmort = buildAmortizationSchedule(
-    loanAmount,
-    o.interest_rate,
-    o.loan_term_years,
-    pmiMonthly,
-    o.purchase_price,
-  )
+  const refinanceParams: RefinanceParams | undefined = o.refinance_enabled
+    ? {
+        triggerMonth: o.refinance_trigger_month,
+        newAnnualInterestRate: o.refinance_new_interest_rate,
+        newLoanTermYears: o.refinance_new_loan_term_years,
+        newClosingCostsPct: o.refinance_closing_costs_pct,
+      }
+    : undefined
+
+  // Build full amortization schedule for the entire loan term, stitching in a refinance event if enabled.
+  const { schedule: fullAmort, refinance_closing_costs_amount: refinanceClosingCostsAmount } =
+    buildAmortizationScheduleWithRefinance(
+      loanAmount,
+      o.interest_rate,
+      o.loan_term_years,
+      pmiMonthly,
+      o.purchase_price,
+      refinanceParams,
+    )
+  // Effective payoff length — can differ from o.loan_term_years * 12 when a refinance changes the term.
+  const totalMonthsLoan = fullAmort.length
 
   // Opportunity cost seeding: owner's larger upfront outflow seeds the renter's investment balance.
   // admin_fee is a non-refundable renter cost; security_deposit/pet_deposit are refundable but still
@@ -200,6 +217,14 @@ export function computeScenario(input: ScenarioInput): ScenarioResult {
     // Monthly differential: positive = owner pays more, renter saves (and invests)
     const differential = ownerMonthlyAfterTax - renterMonthly
     let investedThisMonth = 0
+
+    // One-time refinance closing costs: a lump-sum withdrawal from the owner's investment
+    // balance at the trigger month, mirroring how the original closing costs only affect the
+    // initial seed rather than any month's recurring cost. ownerInvestBalance can legitimately
+    // go negative here — it represents the opportunity cost of capital withdrawn to pay the fee.
+    if (o.refinance_enabled && m === o.refinance_trigger_month) {
+      ownerInvestBalance -= refinanceClosingCostsAmount
+    }
 
     if (differential > 0) {
       // Owner costs more; renter invests the surplus
@@ -329,7 +354,8 @@ export function computeScenario(input: ScenarioInput): ScenarioResult {
     totalHoa +
     totalMaintenance +
     totalUtilitiesOwner +
-    closingCostsAmount
+    closingCostsAmount +
+    refinanceClosingCostsAmount
 
   const totalRentershipOutflows =
     totalRent + totalPetRent + totalParking + totalRentersIns + totalUtilitiesRenter + r.admin_fee
@@ -344,6 +370,7 @@ export function computeScenario(input: ScenarioInput): ScenarioResult {
     total_maintenance: totalMaintenance,
     total_utilities_owner: totalUtilitiesOwner,
     total_closing_costs: closingCostsAmount,
+    total_refinance_closing_costs: refinanceClosingCostsAmount,
     total_ownership_outflows: totalOwnershipOutflows,
     sale_proceeds: saleProceeds,
     owner_final_net_worth: ownerFinalNetWorth,

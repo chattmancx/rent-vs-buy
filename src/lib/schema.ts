@@ -18,6 +18,11 @@ const OwnershipSchema = z.object({
   maintenance_increase_rate: z.number().finite().min(-0.5).max(0.5),
   insurance_increase_rate: z.number().finite().min(-0.5).max(0.5),
   selling_cost_pct: z.number().finite().min(0).max(30),
+  refinance_enabled: z.boolean().default(false),
+  refinance_trigger_month: z.number().finite().int().min(1).max(600).default(60),
+  refinance_new_interest_rate: z.number().finite().min(0).max(100).default(6.0),
+  refinance_new_loan_term_years: z.number().finite().int().min(1).max(50).default(30),
+  refinance_closing_costs_pct: z.number().finite().min(0).max(20).default(2.0),
 })
 
 const RentalSchema = z.object({

@@ -90,4 +90,40 @@ describe('CostsOverTimeChart', () => {
     expect(formatter?.('owner')).toBe('Buying')
     expect(formatter?.('renter')).toBe('Renting')
   })
+
+  it('S17-26: a refinance scenario is reflected in the chart with zero code changes to this component — year 1 unaffected, later years reflect the new rate', () => {
+    const refinanceInput = {
+      ...DEFAULT_INPUT,
+      ownership: {
+        ...DEFAULT_INPUT.ownership,
+        refinance_enabled: true,
+        refinance_trigger_month: 13, // takes effect at the start of year 2
+        refinance_new_interest_rate: 3.0,
+        refinance_new_loan_term_years: 25,
+        refinance_closing_costs_pct: 2.0,
+      },
+      shared: { ...DEFAULT_INPUT.shared, horizon_years: 5 },
+    }
+    const noRefinanceInput = {
+      ...refinanceInput,
+      ownership: { ...refinanceInput.ownership, refinance_enabled: false },
+    }
+    const refinanceResult = computeScenario(refinanceInput)
+    const noRefinanceResult = computeScenario(noRefinanceInput)
+
+    render(<CostsOverTimeChart result={refinanceResult} />)
+    const refinanceChartData = capturedChartData
+    render(<CostsOverTimeChart result={noRefinanceResult} />)
+    const noRefinanceChartData = capturedChartData
+
+    const year1Refi = refinanceChartData.find((p) => p.year === 1)
+    const year1NoRefi = noRefinanceChartData.find((p) => p.year === 1)
+    const year5Refi = refinanceChartData.find((p) => p.year === 5)
+    const year5NoRefi = noRefinanceChartData.find((p) => p.year === 5)
+
+    // Year 1 (before the trigger month) is unaffected
+    expect(year1Refi?.owner).toBeCloseTo(year1NoRefi!.owner, 6)
+    // Year 5 (well after the trigger) reflects the lower new rate — lower owner cost
+    expect(year5Refi?.owner).toBeLessThan(year5NoRefi!.owner)
+  })
 })
