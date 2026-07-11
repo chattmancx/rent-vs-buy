@@ -37,7 +37,7 @@ describe('ChartTabs', () => {
     const sliderBefore = screen.getByRole('slider', { name: /chart horizon/i }) as HTMLInputElement
     const initialValue = sliderBefore.value
 
-    fireEvent.click(screen.getByRole('tab', { name: 'Monthly Cost Change' }))
+    fireEvent.click(screen.getByRole('tab', { name: 'Monthly Costs' }))
     const sliderAfter = screen.getByRole('slider', { name: /chart horizon/i }) as HTMLInputElement
     expect(sliderAfter.value).toBe(initialValue)
 

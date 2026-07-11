@@ -7,19 +7,18 @@ import {
   Tooltip as ChartTooltip,
   Legend,
   ResponsiveContainer,
-  ReferenceLine,
 } from 'recharts'
 import type { ScenarioResult } from '../engine'
-import { formatDelta, formatCurrencyCompact } from '../lib/format'
+import { formatCurrency, formatCurrencyCompact } from '../lib/format'
 import { deflateIfEnabled } from '../lib/inflation'
 
-type MonthlyCostChangeChartProps = {
+type MonthlyCostsChartProps = {
   result: ScenarioResult
 }
 
-export function MonthlyCostChangeChart({ result }: MonthlyCostChangeChartProps) {
+export function MonthlyCostsChart({ result }: MonthlyCostsChartProps) {
   const { real_dollars, inflation_rate } = result.inputs.shared
-  const monthlyByYear = result.yearly_summary.map((row) => ({
+  const chartData = result.yearly_summary.map((row) => ({
     year: row.year,
     owner: deflateIfEnabled(row.owner_costs_this_year / 12, real_dollars, inflation_rate, row.year),
     renter: deflateIfEnabled(
@@ -30,28 +29,18 @@ export function MonthlyCostChangeChart({ result }: MonthlyCostChangeChartProps) 
     ),
   }))
 
-  const chartData: { year: number; owner: number; renter: number }[] = []
-  for (let i = 1; i < monthlyByYear.length; i++) {
-    const prev = monthlyByYear[i - 1]
-    const curr = monthlyByYear[i]
-    if (prev === undefined || curr === undefined) continue
-    chartData.push({
-      year: curr.year,
-      owner: curr.owner - prev.owner,
-      renter: curr.renter - prev.renter,
-    })
-  }
-
   return (
     <div
       role="img"
-      aria-label={`Monthly cost change over time chart over ${result.inputs.shared.horizon_years} years.`}
+      aria-label={`Monthly costs chart over ${result.inputs.shared.horizon_years} years.`}
     >
       <ResponsiveContainer width="100%" height={320}>
         <LineChart data={chartData} margin={{ top: 8, right: 16, bottom: 8, left: 16 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#E2DDD6" />
           <XAxis
             dataKey="year"
+            type="category"
+            interval={0}
             label={{ value: 'Year', position: 'insideBottom', offset: -4 }}
             tick={{ fill: '#8C8884', fontSize: 12 }}
           />
@@ -62,7 +51,7 @@ export function MonthlyCostChangeChart({ result }: MonthlyCostChangeChartProps) 
           />
           <ChartTooltip
             formatter={(value: number, name: string) => [
-              formatDelta(value),
+              formatCurrency(value),
               name === 'owner' ? 'Buying' : 'Renting',
             ]}
             labelFormatter={(label: number) => `Year ${label}`}
@@ -73,7 +62,6 @@ export function MonthlyCostChangeChart({ result }: MonthlyCostChangeChartProps) 
             }}
           />
           <Legend formatter={(value: string) => (value === 'owner' ? 'Buying' : 'Renting')} />
-          <ReferenceLine y={0} stroke="#8C8884" />
           <Line
             type="monotone"
             dataKey="owner"

@@ -34,6 +34,8 @@ export function CostsOverTimeChart({ result }: CostsOverTimeChartProps) {
           <CartesianGrid strokeDasharray="3 3" stroke="#E2DDD6" />
           <XAxis
             dataKey="year"
+            type="category"
+            interval={0}
             label={{ value: 'Year', position: 'insideBottom', offset: -4 }}
             tick={{ fill: '#8C8884', fontSize: 12 }}
           />

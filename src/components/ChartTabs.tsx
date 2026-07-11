@@ -1,7 +1,7 @@
 import { Tabs } from './Tabs'
 import { NetWorthChartBody } from './BreakEvenChart'
 import { CostsOverTimeChart } from './CostsOverTimeChart'
-import { MonthlyCostChangeChart } from './MonthlyCostChangeChart'
+import { MonthlyCostsChart } from './MonthlyCostsChart'
 import { HorizonSlider } from './HorizonSlider'
 import type { ScenarioResult, SharedInput } from '../engine'
 
@@ -23,9 +23,9 @@ export function ChartTabs({ result, updateShared }: ChartTabsProps) {
             content: <CostsOverTimeChart result={result} />,
           },
           {
-            id: 'monthly-change',
-            label: 'Monthly Cost Change',
-            content: <MonthlyCostChangeChart result={result} />,
+            id: 'monthly-costs',
+            label: 'Monthly Costs',
+            content: <MonthlyCostsChart result={result} />,
           },
         ]}
       />
