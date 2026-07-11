@@ -5,7 +5,7 @@ import { ExpertOptions } from './components/ExpertOptions'
 import { HeadlineResult } from './components/HeadlineResult'
 import { CostTable } from './components/CostTable'
 import { InputSection } from './components/InputSection'
-import { BreakEvenChart } from './components/BreakEvenChart'
+import { ChartTabs } from './components/ChartTabs'
 import { SensitivityStrip } from './components/SensitivityStrip'
 
 export default function App() {
@@ -76,7 +76,7 @@ export default function App() {
           </div>
           <div className="space-y-4 md:col-span-3">
             <HeadlineResult result={result} />
-            <BreakEvenChart result={result} updateShared={updateShared} />
+            <ChartTabs result={result} updateShared={updateShared} />
             <SensitivityStrip input={input} result={result} />
             <CostTable result={result} />
           </div>
