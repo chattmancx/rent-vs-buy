@@ -10,7 +10,7 @@ import {
   ReferenceLine,
 } from 'recharts'
 import type { ScenarioResult, SharedInput } from '../engine'
-import { formatCurrency, formatCurrencyCompact } from '../lib/format'
+import { formatCurrency, formatCurrencyCompact, computeXAxisInterval } from '../lib/format'
 import { deflateIfEnabled } from '../lib/inflation'
 import { HorizonSlider } from './HorizonSlider'
 
@@ -50,7 +50,7 @@ export function NetWorthChartBody({ result }: NetWorthChartBodyProps) {
           <XAxis
             dataKey="year"
             type="category"
-            interval={0}
+            interval={computeXAxisInterval(chartData.length)}
             label={{ value: 'Year', position: 'insideBottom', offset: -4 }}
             tick={{ fill: '#8C8884', fontSize: 12 }}
           />

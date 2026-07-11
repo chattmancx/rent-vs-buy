@@ -9,7 +9,7 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 import type { ScenarioResult } from '../engine'
-import { formatCurrency, formatCurrencyCompact } from '../lib/format'
+import { formatCurrency, formatCurrencyCompact, computeXAxisInterval } from '../lib/format'
 import { deflateIfEnabled } from '../lib/inflation'
 
 type MonthlyCostsChartProps = {
@@ -40,7 +40,7 @@ export function MonthlyCostsChart({ result }: MonthlyCostsChartProps) {
           <XAxis
             dataKey="year"
             type="category"
-            interval={0}
+            interval={computeXAxisInterval(chartData.length)}
             label={{ value: 'Year', position: 'insideBottom', offset: -4 }}
             tick={{ fill: '#8C8884', fontSize: 12 }}
           />

@@ -1,11 +1,12 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import React, { isValidElement, type ReactNode } from 'react'
-import { Legend } from 'recharts'
+import { Legend, XAxis } from 'recharts'
 import { MonthlyCostsChart } from '../MonthlyCostsChart'
 import { computeScenario } from '../../engine'
 import { DEFAULT_INPUT } from '../../lib/defaults'
 import { deflate } from '../../lib/inflation'
+import { computeXAxisInterval } from '../../lib/format'
 
 type ChartPoint = { year: number; owner: number; renter: number }
 type LegendFormatter = (value: string) => string
@@ -34,6 +35,14 @@ function findLegendFormatter(children: ReactNode): LegendFormatter | undefined {
   )
   if (!match || !isValidElement(match)) return undefined
   return (match.props as { formatter: LegendFormatter }).formatter
+}
+
+function findXAxisInterval(children: ReactNode): number | undefined {
+  const match = React.Children.toArray(children).find(
+    (child) => isValidElement(child) && child.type === XAxis,
+  )
+  if (!match || !isValidElement(match)) return undefined
+  return (match.props as { interval: number }).interval
 }
 
 describe('MonthlyCostsChart', () => {
@@ -90,5 +99,24 @@ describe('MonthlyCostsChart', () => {
     const formatter = findLegendFormatter(capturedChildren)
     expect(formatter?.('owner')).toBe('Buying')
     expect(formatter?.('renter')).toBe('Renting')
+  })
+
+  it('shows every year on a short horizon (interval 0)', () => {
+    const result = computeScenario({
+      ...DEFAULT_INPUT,
+      shared: { ...DEFAULT_INPUT.shared, horizon_years: 10 },
+    })
+    render(<MonthlyCostsChart result={result} />)
+    expect(findXAxisInterval(capturedChildren)).toBe(0)
+  })
+
+  it('thins the x-axis on a 40-year horizon', () => {
+    const result = computeScenario({
+      ...DEFAULT_INPUT,
+      shared: { ...DEFAULT_INPUT.shared, horizon_years: 40 },
+    })
+    render(<MonthlyCostsChart result={result} />)
+    expect(findXAxisInterval(capturedChildren)).toBe(computeXAxisInterval(40))
+    expect(findXAxisInterval(capturedChildren)).toBeGreaterThan(0)
   })
 })

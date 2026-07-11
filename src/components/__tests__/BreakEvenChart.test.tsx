@@ -1,15 +1,18 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
-import React from 'react'
+import React, { isValidElement, type ReactNode } from 'react'
+import { XAxis } from 'recharts'
 import { BreakEvenChart } from '../BreakEvenChart'
 import { computeScenario } from '../../engine'
 import { DEFAULT_INPUT } from '../../lib/defaults'
 import { deflate } from '../../lib/inflation'
+import { computeXAxisInterval } from '../../lib/format'
 
 type ChartPoint = { year: number; owner: number; renter: number }
 type ChartMargin = { top: number; right: number; bottom: number; left: number }
 let capturedChartData: ChartPoint[] = []
 let capturedMargin: ChartMargin | undefined
+let capturedChildren: ReactNode
 
 vi.mock('recharts', async () => {
   const actual = await vi.importActual<typeof import('recharts')>('recharts')
@@ -18,14 +21,29 @@ vi.mock('recharts', async () => {
     ResponsiveContainer: ({ children }: { children: React.ReactNode }) => (
       <div data-testid="responsive-container">{children}</div>
     ),
-    LineChart: (props: { data: ChartPoint[]; margin?: ChartMargin } & Record<string, unknown>) => {
+    LineChart: (
+      props: {
+        data: ChartPoint[]
+        margin?: ChartMargin
+        children: ReactNode
+      } & Record<string, unknown>,
+    ) => {
       capturedChartData = props.data
       capturedMargin = props.margin
+      capturedChildren = props.children
       const ActualLineChart = actual.LineChart
       return <ActualLineChart {...props} />
     },
   }
 })
+
+function findXAxisInterval(children: ReactNode): number | undefined {
+  const match = React.Children.toArray(children).find(
+    (child) => isValidElement(child) && child.type === XAxis,
+  )
+  if (!match || !isValidElement(match)) return undefined
+  return (match.props as { interval: number }).interval
+}
 
 beforeEach(() => {
   Object.defineProperty(window, 'location', { value: { search: '' }, writable: true })
@@ -129,5 +147,26 @@ describe('BreakEvenChart', () => {
         renter: row.renter_net_worth,
       })),
     )
+  })
+
+  it('shows every year on a short horizon (interval 0)', () => {
+    const result = computeScenario({
+      ...DEFAULT_INPUT,
+      shared: { ...DEFAULT_INPUT.shared, horizon_years: 10 },
+    })
+    const updateShared = vi.fn()
+    render(<BreakEvenChart result={result} updateShared={updateShared} />)
+    expect(findXAxisInterval(capturedChildren)).toBe(0)
+  })
+
+  it('thins the x-axis on a 40-year horizon', () => {
+    const result = computeScenario({
+      ...DEFAULT_INPUT,
+      shared: { ...DEFAULT_INPUT.shared, horizon_years: 40 },
+    })
+    const updateShared = vi.fn()
+    render(<BreakEvenChart result={result} updateShared={updateShared} />)
+    expect(findXAxisInterval(capturedChildren)).toBe(computeXAxisInterval(40))
+    expect(findXAxisInterval(capturedChildren)).toBeGreaterThan(0)
   })
 })

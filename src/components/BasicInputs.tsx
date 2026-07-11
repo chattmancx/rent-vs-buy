@@ -59,7 +59,7 @@ export function BasicInputs({
       />
 
       {/* Horizon slider */}
-      <div className="flex flex-col gap-1">
+      <div className="col-span-full flex flex-col gap-1">
         <div className="flex items-center justify-between">
           <div className="flex items-center text-sm font-medium text-ink-secondary">
             <span>Analysis Horizon</span>
@@ -99,7 +99,7 @@ export function BasicInputs({
       />
 
       {/* Invest vs spend slider */}
-      <div className="flex flex-col gap-1">
+      <div className="col-span-full flex flex-col gap-1">
         <div className="flex items-center justify-between">
           <div className="flex items-center text-sm font-medium text-ink-secondary">
             <span>Invest vs. Spend</span>

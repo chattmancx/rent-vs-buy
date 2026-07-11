@@ -1,11 +1,12 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import React, { isValidElement, type ReactNode } from 'react'
-import { Legend } from 'recharts'
+import { Legend, XAxis } from 'recharts'
 import { CostsOverTimeChart } from '../CostsOverTimeChart'
 import { computeScenario } from '../../engine'
 import { DEFAULT_INPUT } from '../../lib/defaults'
 import { deflate } from '../../lib/inflation'
+import { computeXAxisInterval } from '../../lib/format'
 
 type ChartPoint = { year: number; owner: number; renter: number }
 type LegendFormatter = (value: string) => string
@@ -34,6 +35,14 @@ function findLegendFormatter(children: ReactNode): LegendFormatter | undefined {
   )
   if (!match || !isValidElement(match)) return undefined
   return (match.props as { formatter: LegendFormatter }).formatter
+}
+
+function findXAxisInterval(children: ReactNode): number | undefined {
+  const match = React.Children.toArray(children).find(
+    (child) => isValidElement(child) && child.type === XAxis,
+  )
+  if (!match || !isValidElement(match)) return undefined
+  return (match.props as { interval: number }).interval
 }
 
 describe('CostsOverTimeChart', () => {
@@ -89,6 +98,26 @@ describe('CostsOverTimeChart', () => {
     const formatter = findLegendFormatter(capturedChildren)
     expect(formatter?.('owner')).toBe('Buying')
     expect(formatter?.('renter')).toBe('Renting')
+  })
+
+  it('shows every year on a short horizon (interval 0)', () => {
+    const result = computeScenario({
+      ...DEFAULT_INPUT,
+      shared: { ...DEFAULT_INPUT.shared, horizon_years: 10 },
+    })
+    render(<CostsOverTimeChart result={result} />)
+    expect(findXAxisInterval(capturedChildren)).toBe(computeXAxisInterval(10))
+    expect(findXAxisInterval(capturedChildren)).toBe(0)
+  })
+
+  it('thins the x-axis on a 40-year horizon', () => {
+    const result = computeScenario({
+      ...DEFAULT_INPUT,
+      shared: { ...DEFAULT_INPUT.shared, horizon_years: 40 },
+    })
+    render(<CostsOverTimeChart result={result} />)
+    expect(findXAxisInterval(capturedChildren)).toBe(computeXAxisInterval(40))
+    expect(findXAxisInterval(capturedChildren)).toBeGreaterThan(0)
   })
 
   it('S17-26: a refinance scenario is reflected in the chart with zero code changes to this component — year 1 unaffected, later years reflect the new rate', () => {
