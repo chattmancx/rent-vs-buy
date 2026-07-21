@@ -50,4 +50,4 @@ src/          React app
 
 ## Deployed URL
 
-https://chattmancx.github.io/rent-vs-buy/
+https://manual-circuit.github.io/rent-vs-buy/
